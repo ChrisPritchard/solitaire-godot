@@ -1,12 +1,9 @@
 using Godot;
 
-namespace SolitaireGodot
+public partial class GameController : Node
 {
-    public partial class GameController : Node
+    public override void _Ready()
     {
-        public override void _Ready()
-        {
-            GD.Print("hello from codium!");
-        }
+        GD.Print("hello from codium!");
     }
 }

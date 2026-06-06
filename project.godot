@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="New Game Project"
+config/name="SolitaireGodot"
 run/main_scene="uid://155xx7s6y6ta"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 config/icon="res://icon.svg"
@@ -27,3 +27,4 @@ project/assembly_name="New Game Project"
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+environment/defaults/default_clear_color=Color(0.17420888, 0.34279796, 0.25768185, 1)
