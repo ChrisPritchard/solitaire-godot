@@ -3,6 +3,9 @@ public partial class BaseCard : Node2D
 {
     private Area2D area;
 
+    private bool dragging;
+    private Vector2 dragstart;
+
     public override void _Ready()
     {
         area = GetNode<Area2D>("Area2D");
@@ -13,7 +16,19 @@ public partial class BaseCard : Node2D
     {
         if (@event is InputEventMouseButton mouse && mouse.ButtonIndex == MouseButton.Left)
         {
-            GD.Print("clicked card");
+            if (dragging && !mouse.Pressed)
+                dragging = false;
+            else if (!dragging && mouse.Pressed)
+            {
+                dragging = true;
+                dragstart = GlobalPosition - GetGlobalMousePosition();
+            }
         }
+    }
+
+    public override void _Process(double delta)
+    {
+        if (dragging)
+            GlobalPosition = GetGlobalMousePosition() + dragstart;
     }
 }

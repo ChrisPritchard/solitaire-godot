@@ -18,7 +18,7 @@ script = ExtResource("1_o5qli")
 texture_filter = 1
 texture_repeat = 1
 position = Vector2(562, 300)
-scale = Vector2(8.941176, 9.076923)
+scale = Vector2(4, 4)
 texture = SubResource("AtlasTexture_sugp2")
 script = ExtResource("3_sugp2")
 
