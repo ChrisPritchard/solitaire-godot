@@ -1,5 +1,3 @@
-using System;
-using Godot;
 
 public partial class BaseCard : Node2D
 {
