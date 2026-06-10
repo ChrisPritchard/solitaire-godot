@@ -53,3 +53,51 @@ foreach (var result in results)
 {
     if (result["collider"].AsGodotObject() is Area2D area)
 ```
+
+I feel most of the game logic can be expressed in a complicated set of conditionals 🤔:
+
+input events:
+    if dragging:
+        if mouse up:
+            if can place:
+                place, stop dragging (multi cards can only go on tableaus, mind)
+        else if move:
+            move dragged cards
+    else:
+        if mouse down:
+            if stock:
+                expand stock
+            else if can pick:
+                pick, start dragging
+
+with pick logic being:
+    is this waste:
+        is card on top:
+            then pick up single
+    else is this tableau:
+        is card on top:
+            then pick up single
+        else is card under sequence:
+            then pick up multi
+
+and drop logic being:
+    is single drag:
+        is this foundation, waste spare or tableau:
+            is this top position:
+                is card in sequence:
+                    then yes
+    else is this multi:
+        is this tableau:
+            is this top position:
+                is base card in sequence:
+                    then yes
+
+sequence is slightly different:
+    is this foundation: 
+        is card +1 same suit:
+            yes
+    else
+        is card -1, opposing suit:
+            yes
+
+I think thats it?
