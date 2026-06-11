@@ -6,9 +6,9 @@ public partial class GameController : Node
     {
         GD.Print("hello from codium!");
 
-        foreach(var o in GetChildren())
-            if (o is Card c)
-                c.SetFace(c.Suit, c.Rank);
+        // foreach(var o in GetChildren())
+        //     if (o is Card c)
+        //         c.SetFace(c.Suit, c.Rank);
     }
 
     Card draggedCard;
@@ -27,12 +27,14 @@ public partial class GameController : Node
                 {
                     c.Child = draggedCard;
                     c.PositionOnTop(draggedCard);
+                    // disconnect old parent?
                     draggedCard = null;
                 }
                 else if (under is Space s && s.CanAccept(draggedCard))
                 {
                     s.Child = draggedCard;
                     s.PositionOnSpace(draggedCard);
+                    // disconnect old parent?
                     draggedCard = null;
                 }
                 else
@@ -40,6 +42,7 @@ public partial class GameController : Node
                     draggedCard.GlobalPosition = dragStart;
                     if(draggedCard.Child != null)
                         draggedCard.PositionOnTop(draggedCard.Child);
+                    // reset z order
                     draggedCard = null;
                 }
             } 

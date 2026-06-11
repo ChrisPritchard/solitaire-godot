@@ -1,7 +1,6 @@
 
 public partial class Card : Sprite2D
 {
-    public GodotObject Parent { get; set; }
     public Card Child { get; set; }
     [Export]
     public LocationType Location { get; set; }
