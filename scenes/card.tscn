@@ -15,7 +15,7 @@ size = Vector2(34.111847, 51.88983)
 [node name="Card" type="Sprite2D" unique_id=1026286923]
 texture_filter = 1
 texture_repeat = 1
-scale = Vector2(4, 4)
+scale = Vector2(2.5, 2.5)
 texture = SubResource("AtlasTexture_ktuci")
 script = ExtResource("1_d81rb")
 Location = 1

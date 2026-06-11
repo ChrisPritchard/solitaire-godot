@@ -1,5 +1,5 @@
 
 public enum LocationType 
 {
-    Foundation, Tableau, Waste
+    Foundation, Tableau, Waste, Stock
 }

@@ -1,14 +1,54 @@
 
 
+using System.Collections.Generic;
+
 public partial class GameController : Node
 {
+    readonly Queue<(int Suit, int Rank)> deck = [];
+
+    private PackedScene cardScene;
+
     public override void _Ready()
     {
-        GD.Print("hello from codium!");
+        // create random deck
+        var allCards = new List<(int Suit, int Rank)>();
+        for (var i = 0; i < 4; i++)
+            for(var j = 1; j < 14; j++)
+                allCards.Add((i, j));
 
-        foreach(var o in GetChildren())
-            if (o is Card c)
-                c.SetFace(c.Suit, c.Rank);
+        var random = new Random();
+        while (deck.Count < 52)
+        {
+            var index = random.Next(allCards.Count);
+            deck.Enqueue(allCards[index]);
+            allCards.RemoveAt(index);
+        }
+
+        cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
+
+        // deal tableaus
+        for (var i = 1; i <= 7; i++) {
+            var tableau = GetNode<Space>("%Tableau" + i);
+            Card last = null;
+            for(var j = 0; j < i; j++) {
+                var (Suit, Rank) = deck.Dequeue();
+                var card = cardScene.Instantiate<Card>();
+                card.Location = LocationType.Tableau;
+                card.SetFace(Suit, Rank);
+                if (last == null)
+                {
+                    card.ChangeParent(tableau);
+                    tableau.PositionOnSpace(card);
+                }
+                else
+                {
+                    card.ChangeParent(last);
+                    last.PositionOnTop(card);
+                }
+                last = card;
+                AddChild(card);
+            }
+        }
     }
 
     Card draggedCard;
@@ -57,7 +97,8 @@ public partial class GameController : Node
                 }
                 else if (under is Stock s)
                 {
-                    s.ToWaste();
+                    // take three cards
+                    s.QueueFree();
                 }
             }
         }
@@ -90,6 +131,8 @@ public partial class GameController : Node
                     top = c;
                 else if(parent is Space s && top == null)
                     top = s;
+                else if(parent is Stock o)
+                    top = o;
             }
         }
         return top;

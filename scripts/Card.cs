@@ -12,7 +12,7 @@ public partial class Card : Sprite2D
     [Export]
     public int Rank { get; set; }
 
-    public readonly Vector2 TableauOffset = new(0, 40);
+    public readonly Vector2 TableauOffset = new(0, 25);
 
     public void SetFace(int suit, int rank)
     {

@@ -1,15 +1,8 @@
 [gd_scene format=3 uid="uid://155xx7s6y6ta"]
 
 [ext_resource type="Script" uid="uid://2y0uxyuaperl" path="res://scripts/GameController.cs" id="1_o5qli"]
-[ext_resource type="PackedScene" uid="uid://4gkas7kf1v2e" path="res://scenes/card.tscn" id="3_sugp2"]
-[ext_resource type="Script" uid="uid://bpuijlgdpps6h" path="res://scripts/Space.cs" id="4_tbgi4"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tefeu"]
-load_path = "res://.godot/imported/card-suites.png-71df347d80a59915feb8ac2e136237b2.ctex"
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_o6xl0"]
-atlas = SubResource("CompressedTexture2D_tefeu")
-region = Rect2(12, 183, 36, 54)
+[ext_resource type="PackedScene" uid="uid://c6m0h2qsosjbe" path="res://scenes/space.tscn" id="2_sugp2"]
+[ext_resource type="PackedScene" uid="uid://cjqjbb4obdk0r" path="res://scenes/stock.tscn" id="3_sugp2"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(34.111847, 51.88983)
@@ -17,39 +10,70 @@ size = Vector2(34.111847, 51.88983)
 [node name="Main" type="Node2D" unique_id=763680367]
 script = ExtResource("1_o5qli")
 
-[node name="Space" type="Sprite2D" parent="." unique_id=2041434064]
-texture_filter = 1
-texture_repeat = 1
-position = Vector2(100, 300)
-scale = Vector2(4, 4)
-texture = SubResource("AtlasTexture_o6xl0")
-script = ExtResource("4_tbgi4")
-Location = 1
+[node name="Foundation1" parent="." unique_id=1762924900 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(70, 100)
+Location = 0
 
-[node name="Area2D" type="Area2D" parent="Space" unique_id=997567627]
+[node name="Foundation2" parent="." unique_id=1345670450 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(70, 250)
+Location = 0
+
+[node name="Foundation3" parent="." unique_id=738010012 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(70, 400)
+Location = 0
+
+[node name="Foundation4" parent="." unique_id=665972519 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(70, 550)
+Location = 0
+
+[node name="Spare" parent="." unique_id=1135585897 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(200, 100)
+Location = 3
+
+[node name="Tableau1" parent="." unique_id=1205518017 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(200, 250)
+
+[node name="Tableau2" parent="." unique_id=19843753 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(320, 250)
+
+[node name="Waste" type="Area2D" parent="." unique_id=1766475718]
+unique_name_in_owner = true
+position = Vector2(320, 100)
+scale = Vector2(2.5, 2.5)
 monitoring = false
 monitorable = false
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Space/Area2D" unique_id=2035465247]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Waste" unique_id=168645534]
 position = Vector2(-0.055923462, 0.16525269)
 shape = SubResource("RectangleShape2D_0wfyh")
 
-[node name="Card" parent="." unique_id=1026286923 instance=ExtResource("3_sugp2")]
-position = Vector2(373, 262)
-Suit = 2
+[node name="Tableau3" parent="." unique_id=793401433 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(440, 250)
 
-[node name="Card2" parent="." unique_id=2119877746 instance=ExtResource("3_sugp2")]
-position = Vector2(760, 287)
-Rank = 2
+[node name="Tableau4" parent="." unique_id=1738393350 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(560, 250)
 
-[node name="Card3" parent="." unique_id=1922958740 instance=ExtResource("3_sugp2")]
-position = Vector2(543, 469)
-Rank = 2
+[node name="Tableau5" parent="." unique_id=2029225994 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(680, 250)
 
-[node name="Card4" parent="." unique_id=1855352233 instance=ExtResource("3_sugp2")]
-position = Vector2(308, 520)
-Rank = 3
+[node name="Tableau6" parent="." unique_id=1483316656 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(800, 250)
 
-[node name="Card5" parent="." unique_id=1890095701 instance=ExtResource("3_sugp2")]
-position = Vector2(990, 418)
-Rank = 4
+[node name="Tableau7" parent="." unique_id=1880383339 instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+position = Vector2(920, 250)
+
+[node name="Stock" parent="." unique_id=1420905260 instance=ExtResource("3_sugp2")]
+unique_name_in_owner = true
+position = Vector2(200, 100)
