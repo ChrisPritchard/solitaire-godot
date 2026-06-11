@@ -31,25 +31,38 @@ public partial class GameController : Node
             var tableau = GetNode<Space>("%Tableau" + i);
             Card last = null;
             for(var j = 0; j < i; j++) {
-                var (Suit, Rank) = deck.Dequeue();
-                var card = cardScene.Instantiate<Card>();
-                card.Location = LocationType.Tableau;
-                card.SetFace(Suit, Rank);
-                if (last == null)
-                {
-                    card.ChangeParent(tableau);
-                    tableau.PositionOnSpace(card);
-                }
-                else
-                {
-                    card.ChangeParent(last);
-                    last.PositionOnTop(card);
-                }
-                last = card;
-                AddChild(card);
+                var next = DealCard((CanvasItem)last ?? tableau);
+                if(next != null)
+                    last = next;
             }
         }
     }
+
+    private Card DealCard(CanvasItem parent)
+    {
+        if(deck.Count == 0)
+            return null;
+
+        var (Suit, Rank) = deck.Dequeue();
+        var card = cardScene.Instantiate<Card>();
+        card.SetFace(Suit, Rank);
+        
+        if (parent is Space s)
+        {
+            card.ChangeParent(s);
+            s.PositionOnSpace(card);
+        }
+        else if(parent is Card c)
+        {
+            card.ChangeParent(c);
+            c.PositionOnTop(card);
+        }
+
+        AddChild(card);
+        return card;
+    }
+
+    Card lastWaste;
 
     Card draggedCard;
     Vector2 dragStart, dragOffset;
@@ -97,8 +110,18 @@ public partial class GameController : Node
                 }
                 else if (under is Stock s)
                 {
-                    // take three cards
-                    s.QueueFree();
+                    for(var i = 0; i < 3; i++)
+                    {
+                        var next = DealCard(lastWaste);
+                        if(next != null && lastWaste == null)
+                        {
+                            next.GlobalPosition = GetNode<Area2D>("%Waste").GlobalPosition;
+                            next.Location = LocationType.Waste;
+                        }
+                        lastWaste = next;
+                    }
+                    if(deck.Count <= 3)
+                        s.QueueFree();
                 }
             }
         }

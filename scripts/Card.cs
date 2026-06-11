@@ -13,6 +13,7 @@ public partial class Card : Sprite2D
     public int Rank { get; set; }
 
     public readonly Vector2 TableauOffset = new(0, 25);
+    public readonly Vector2 WasteOffset = new(25, 0);
 
     public void SetFace(int suit, int rank)
     {
@@ -62,6 +63,8 @@ public partial class Card : Sprite2D
     {
         if(Location == LocationType.Foundation)
             other.GlobalPosition = GlobalPosition;
+        else if(Location == LocationType.Waste)
+            other.GlobalPosition = GlobalPosition + WasteOffset;
         else
             other.GlobalPosition = GlobalPosition + TableauOffset;
 
