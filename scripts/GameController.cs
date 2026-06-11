@@ -70,7 +70,7 @@ public partial class GameController : Node
         }
     }
 
-    private GodotObject UnderPoint(Vector2 point)
+    private CanvasItem UnderPoint(Vector2 point)
     {
         var query = new PhysicsPointQueryParameters2D
         {
@@ -80,12 +80,12 @@ public partial class GameController : Node
             CollideWithBodies = false
         };
         var results = GetViewport().World2D.DirectSpaceState.IntersectPoint(query);
-        Sprite2D top = null;
+        CanvasItem top = null;
         foreach (var result in results)
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
-                var parent = area.GetParent();
+                var parent = area.GetParent<CanvasItem>();
                 if(parent is Card c && (draggedCard == null || draggedCard != c) && (top == null || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
