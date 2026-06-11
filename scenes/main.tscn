@@ -41,6 +41,63 @@ monitorable = false
 position = Vector2(-0.055923462, 0.16525269)
 shape = SubResource("RectangleShape2D_0wfyh")
 
+[node name="Card2" type="Sprite2D" parent="." unique_id=1121531026]
+texture_filter = 1
+texture_repeat = 1
+position = Vector2(750, 300)
+scale = Vector2(4, 4)
+texture = SubResource("AtlasTexture_sugp2")
+script = ExtResource("3_jyhfs")
+Location = 1
+Suit = 2
+Rank = 2
+
+[node name="Area2D" type="Area2D" parent="Card2" unique_id=2026909269]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Card2/Area2D" unique_id=827235960]
+position = Vector2(-0.055923462, 0.16525269)
+shape = SubResource("RectangleShape2D_0wfyh")
+
+[node name="Card3" type="Sprite2D" parent="." unique_id=1458859751]
+texture_filter = 1
+texture_repeat = 1
+position = Vector2(750, 550)
+scale = Vector2(4, 4)
+texture = SubResource("AtlasTexture_sugp2")
+script = ExtResource("3_jyhfs")
+Location = 1
+Suit = 1
+Rank = 3
+
+[node name="Area2D" type="Area2D" parent="Card3" unique_id=149245696]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Card3/Area2D" unique_id=1146678182]
+position = Vector2(-0.055923462, 0.16525269)
+shape = SubResource("RectangleShape2D_0wfyh")
+
+[node name="Card4" type="Sprite2D" parent="." unique_id=1851727981]
+texture_filter = 1
+texture_repeat = 1
+position = Vector2(562, 550)
+scale = Vector2(4, 4)
+texture = SubResource("AtlasTexture_sugp2")
+script = ExtResource("3_jyhfs")
+Location = 1
+Suit = 2
+Rank = 4
+
+[node name="Area2D" type="Area2D" parent="Card4" unique_id=552173280]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Card4/Area2D" unique_id=1712655975]
+position = Vector2(-0.055923462, 0.16525269)
+shape = SubResource("RectangleShape2D_0wfyh")
+
 [node name="Space" type="Sprite2D" parent="." unique_id=2041434064]
 texture_filter = 1
 texture_repeat = 1

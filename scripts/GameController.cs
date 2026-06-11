@@ -5,6 +5,10 @@ public partial class GameController : Node
     public override void _Ready()
     {
         GD.Print("hello from codium!");
+
+        foreach(var o in GetChildren())
+            if (o is Card c)
+                c.SetFace(c.Suit, c.Rank);
     }
 
     Card draggedCard;
@@ -65,6 +69,26 @@ public partial class GameController : Node
 
     private GodotObject UnderPoint(Vector2 point)
     {
-        throw new NotImplementedException();
+        var query = new PhysicsPointQueryParameters2D
+        {
+            Position = point,
+            CollisionMask = 1,
+            CollideWithAreas = true,
+            CollideWithBodies = false
+        };
+        var results = GetViewport().World2D.DirectSpaceState.IntersectPoint(query);
+        Sprite2D top = null;
+        foreach (var result in results)
+        {
+            if (result["collider"].AsGodotObject() is Area2D area) 
+            {
+                var parent = area.GetParent();
+                if(parent is Card c && (draggedCard == null || draggedCard != c) && (top == null || top.ZIndex < c.ZIndex))
+                    top = c;
+                else if(parent is Space s && top == null)
+                    top = s;
+            }
+        }
+        return top;
     }
 }
