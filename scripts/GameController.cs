@@ -16,7 +16,7 @@ public partial class GameController : Node
             for(var j = 1; j < 14; j++)
                 allCards.Add((i, j));
 
-        var random = new Random();
+        var random = new Random(1);
         while (deck.Count < 52)
         {
             var index = random.Next(allCards.Count);

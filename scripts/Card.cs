@@ -26,7 +26,7 @@ public partial class Card : Sprite2D
 
     public bool CanAccept(Card other)
     {
-        if(Child != null) 
+        if(other != Child && Child != null) 
             return false;
 
         if(Location == LocationType.Foundation)
@@ -80,7 +80,7 @@ public partial class Card : Sprite2D
         if(Location == LocationType.Waste && Child != null)
             return false;
 
-        if (Location == LocationType.Tableau && (Child == null || Child.CanBeDragged()))
+        if (Location == LocationType.Tableau && (Child == null || (CanAccept(Child) && Child.CanBeDragged())))
             return true;
 
         return false;

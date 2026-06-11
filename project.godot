@@ -25,6 +25,7 @@ project/assembly_name="New Game Project"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
 environment/defaults/default_clear_color=Color(0.17420888, 0.34279796, 0.25768185, 1)
