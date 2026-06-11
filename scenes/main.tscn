@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://2y0uxyuaperl" path="res://scripts/GameController.cs" id="1_o5qli"]
 [ext_resource type="Texture2D" uid="uid://bcvst5fmmj1um" path="res://assets/card-suites.png" id="2_0wfyh"]
-[ext_resource type="Script" uid="uid://uiuduhdxmqfs" path="res://scripts/BaseCard.cs" id="3_sugp2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_sugp2"]
 atlas = ExtResource("2_0wfyh")
@@ -20,7 +19,6 @@ texture_repeat = 1
 position = Vector2(562, 300)
 scale = Vector2(4, 4)
 texture = SubResource("AtlasTexture_sugp2")
-script = ExtResource("3_sugp2")
 
 [node name="Area2D" type="Area2D" parent="CardTest" unique_id=1100403952]
 monitoring = false
