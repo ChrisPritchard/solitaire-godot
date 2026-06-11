@@ -80,11 +80,11 @@ public partial class Card : Sprite2D
         if (Location == LocationType.Foundation)
             return false;
 
-        if(Location == LocationType.Waste && Child != null)
-            return false;
+        if(Location == LocationType.Waste)
+            return Child == null;
 
-        if (Location == LocationType.Tableau && (Child == null || (CanAccept(Child) && Child.CanBeDragged())))
-            return true;
+        if (Location == LocationType.Tableau)
+            return Child == null || (CanAccept(Child) && Child.CanBeDragged());
 
         return false;
     }

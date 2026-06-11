@@ -149,7 +149,7 @@ public partial class GameController : Node
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
-                var parent = area.GetParent<CanvasItem>();
+                var parent = area.GetParent<GodotObject>();
                 if(parent is Card c && (draggedCard == null || draggedCard != c) && (top == null || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
