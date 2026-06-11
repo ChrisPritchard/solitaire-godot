@@ -1,5 +1,4 @@
 
-using System.Collections.Generic;
 
 public partial class GameController : Node
 {
@@ -8,37 +7,47 @@ public partial class GameController : Node
         GD.Print("hello from codium!");
     }
 
-    readonly List<(Card Card, Vector2 DragStart)> dragged = [];
+    Card draggedCard;
+    Vector2 dragStart, dragOffset;
+
+    const int dragZIndex = 1000;
 
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left)
         {
-            if(dragged.Count > 0 && !mb.Pressed)
+            if(draggedCard != null && !mb.Pressed)
             {
                 var under = UnderPoint(mb.GlobalPosition);
-                if (under is Card c && c.CanAccept(dragged[0].Card))
+                if (under is Card c && c.CanAccept(draggedCard))
                 {
-                    c.Child = dragged[0].Card;
-                    // set position
-                    dragged.Clear();
+                    c.Child = draggedCard;
+                    c.PositionOnTop(draggedCard);
+                    draggedCard = null;
                 }
-                else if (under is Space s && dragged.Count == 1 && s.CanAccept(dragged[0].Card))
+                else if (under is Space s && s.CanAccept(draggedCard))
                 {
-                    s.Child = dragged[0].Card;
-                    // set position
-                    dragged.Clear();
+                    s.Child = draggedCard;
+                    s.PositionOnSpace(draggedCard);
+                    draggedCard = null;
                 }
-                // reset positions
-                dragged.Clear();
+                else
+                {
+                    draggedCard.GlobalPosition = dragStart;
+                    if(draggedCard.Child != null)
+                        draggedCard.PositionOnTop(draggedCard.Child);
+                    draggedCard = null;
+                }
             } 
-            else if (dragged.Count == 0 && mb.Pressed)
+            else if (draggedCard == null && mb.Pressed)
             {
-                // start dragging
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanBeDragged())
                 {
-                    // set dragged to card
+                    c.ZIndex = dragZIndex;
+                    dragStart = c.GlobalPosition;
+                    dragOffset = c.GlobalPosition - mb.GlobalPosition;
+                    draggedCard = c;
                 }
                 else if (under is Stock s)
                 {
@@ -46,12 +55,11 @@ public partial class GameController : Node
                 }
             }
         }
-        else if(dragged.Count > 0 && @event is InputEventMouseMotion mm)
+        else if(draggedCard != null && @event is InputEventMouseMotion mm)
         {
-            foreach(var (card, dragStart) in dragged)
-            {
-                card.GlobalPosition = mm.GlobalPosition + dragStart;
-            }
+            draggedCard.GlobalPosition = mm.GlobalPosition + dragOffset;
+            if(draggedCard.Child != null)
+                draggedCard.PositionOnTop(draggedCard.Child);
         }
     }
 
