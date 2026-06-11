@@ -13,6 +13,7 @@ public partial class GameController : Node
 
     Card draggedCard;
     Vector2 dragStart, dragOffset;
+    int startZIndex;
 
     const int dragZIndex = 1000;
 
@@ -25,16 +26,14 @@ public partial class GameController : Node
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanAccept(draggedCard))
                 {
-                    c.Child = draggedCard;
+                    draggedCard.ChangeParent(c);
                     c.PositionOnTop(draggedCard);
-                    // disconnect old parent?
                     draggedCard = null;
                 }
                 else if (under is Space s && s.CanAccept(draggedCard))
                 {
-                    s.Child = draggedCard;
+                    draggedCard.ChangeParent(s);
                     s.PositionOnSpace(draggedCard);
-                    // disconnect old parent?
                     draggedCard = null;
                 }
                 else
@@ -42,7 +41,7 @@ public partial class GameController : Node
                     draggedCard.GlobalPosition = dragStart;
                     if(draggedCard.Child != null)
                         draggedCard.PositionOnTop(draggedCard.Child);
-                    // reset z order
+                    draggedCard.ZIndex = dragZIndex;
                     draggedCard = null;
                 }
             } 
@@ -51,6 +50,7 @@ public partial class GameController : Node
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanBeDragged())
                 {
+                    startZIndex = c.ZIndex;
                     c.ZIndex = dragZIndex;
                     dragStart = c.GlobalPosition;
                     dragOffset = c.GlobalPosition - mb.GlobalPosition;

@@ -1,6 +1,7 @@
 
 public partial class Card : Sprite2D
 {
+    public GodotObject Parent { get; set; }
     public Card Child { get; set; }
     [Export]
     public LocationType Location { get; set; }
@@ -39,6 +40,20 @@ public partial class Card : Sprite2D
         }
 
         return false;
+    }
+
+    public void ChangeParent(GodotObject other)
+    {
+        if(Parent != null)
+            if(Parent is Card c)
+                c.Child = null;
+            else if(Parent is Space s)
+                s.Child = null;
+        Parent = other;
+        if(other is Card c2)
+            c2.Child = this;
+        else if(other is Space s2)
+            s2.Child = this;
     }
 
     public void PositionOnTop(Card other)
