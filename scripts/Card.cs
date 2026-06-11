@@ -12,12 +12,14 @@ public partial class Card : Sprite2D
     [Export]
     public int Rank { get; set; }
 
-    public readonly Vector2 TableauOffset = new(0, 10);
+    public readonly Vector2 TableauOffset = new(0, 40);
 
     public void SetFace(int suit, int rank)
     {
         Suit = suit;
         Rank = rank;
+
+        Texture = ResourceLoader.Load<Texture2D>("res://assets/card-suites.png");
         RegionEnabled = true;
         RegionRect = SpriteRegions.CardIndexes[Suit][Rank];
     }

@@ -6,9 +6,9 @@ public partial class GameController : Node
     {
         GD.Print("hello from codium!");
 
-        // foreach(var o in GetChildren())
-        //     if (o is Card c)
-        //         c.SetFace(c.Suit, c.Rank);
+        foreach(var o in GetChildren())
+            if (o is Card c)
+                c.SetFace(c.Suit, c.Rank);
     }
 
     Card draggedCard;
@@ -41,7 +41,7 @@ public partial class GameController : Node
                     draggedCard.GlobalPosition = dragStart;
                     if(draggedCard.Child != null)
                         draggedCard.PositionOnTop(draggedCard.Child);
-                    draggedCard.ZIndex = dragZIndex;
+                    draggedCard.ZIndex = startZIndex;
                     draggedCard = null;
                 }
             } 
@@ -51,7 +51,6 @@ public partial class GameController : Node
                 if (under is Card c && c.CanBeDragged())
                 {
                     startZIndex = c.ZIndex;
-                    c.ZIndex = dragZIndex;
                     dragStart = c.GlobalPosition;
                     dragOffset = c.GlobalPosition - mb.GlobalPosition;
                     draggedCard = c;
@@ -64,6 +63,7 @@ public partial class GameController : Node
         }
         else if(draggedCard != null && @event is InputEventMouseMotion mm)
         {
+            draggedCard.ZIndex = dragZIndex;
             draggedCard.GlobalPosition = mm.GlobalPosition + dragOffset;
             if(draggedCard.Child != null)
                 draggedCard.PositionOnTop(draggedCard.Child);

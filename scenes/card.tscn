@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://4gkas7kf1v2e"]
+
+[ext_resource type="Script" uid="uid://uiuduhdxmqfs" path="res://scripts/Card.cs" id="1_d81rb"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_6u4wf"]
+load_path = "res://.godot/imported/card-suites.png-71df347d80a59915feb8ac2e136237b2.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktuci"]
+atlas = SubResource("CompressedTexture2D_6u4wf")
+region = Rect2(346, 242, 36, 54)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
+size = Vector2(34.111847, 51.88983)
+
+[node name="Card" type="Sprite2D" unique_id=1026286923]
+texture_filter = 1
+texture_repeat = 1
+scale = Vector2(4, 4)
+texture = SubResource("AtlasTexture_ktuci")
+script = ExtResource("1_d81rb")
+Location = 1
+Suit = 1
+Rank = 1
+
+[node name="Area2D" type="Area2D" parent="." unique_id=2114814545]
+monitoring = false
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=2002132401]
+position = Vector2(-0.055923462, 0.16525269)
+shape = SubResource("RectangleShape2D_0wfyh")
