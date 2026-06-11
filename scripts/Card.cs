@@ -1,13 +1,26 @@
 
-public partial class Card : Node2D
+public partial class Card : Sprite2D
 {
     public GodotObject Parent { get; set; }
     public Card Child { get; set; }
+    [Export]
     public LocationType Location { get; set; }
 
-    public (int Suit, int Rank) Face { get; set; }
+    [Export]
+    public int Suit { get; set; }
+
+    [Export]
+    public int Rank { get; set; }
 
     public readonly Vector2 TableauOffset = new(0, 10);
+
+    public void SetFace(int suit, int rank)
+    {
+        Suit = suit;
+        Rank = rank;
+        RegionEnabled = true;
+        RegionRect = SpriteRegions.CardIndexes[Suit][Rank];
+    }
 
     public bool CanAccept(Card other)
     {
@@ -18,12 +31,12 @@ public partial class Card : Node2D
         {
             if (other.Child != null)
                 return false;
-                
-            return other.Face.Suit == Face.Suit && other.Face.Rank == Face.Rank + 1;
+
+            return other.Suit == Suit && other.Rank == Rank + 1;
         }
         else if (Location == LocationType.Tableau)
         {
-            return Face.Suit%2 != other.Face.Suit%2 && Face.Rank == other.Face.Rank+1;
+            return Suit%2 != other.Suit%2 && Rank == other.Rank+1;
         }
 
         return false;
@@ -37,6 +50,7 @@ public partial class Card : Node2D
             other.GlobalPosition = GlobalPosition + TableauOffset;
 
         other.ZIndex = ZIndex + 1;
+        other.Location = Location;
 
         if(other.Child != null)
             other.PositionOnTop(other.Child);
