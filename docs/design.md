@@ -54,6 +54,8 @@ foreach (var result in results)
     if (result["collider"].AsGodotObject() is Area2D area)
 ```
 
+## decision logic
+
 I feel most of the game logic can be expressed in a complicated set of conditionals 🤔:
 
 input events:
@@ -61,6 +63,8 @@ input events:
         if mouse up:
             if can place:
                 place, stop dragging (multi cards can only go on tableaus, mind)
+            else
+                return to origin
         else if move:
             move dragged cards
     else:
@@ -100,4 +104,30 @@ sequence is slightly different:
         is card -1, opposing suit:
             yes
 
-I think thats it?
+I think thats it? how and where should dragging be implemented? perhaps as a inputevent handler on the main controller. it will need to track the cards its dragging, and for each it needs their 'drag start'
+
+## objects and methods
+
+for objects we need:
+
+- root spaces, which can be foundations, stock, tableau roots (and also the first place in the waste). each needs to know what it is so it can report this on update
+- cards, which need to know where they are, and what is above or below them. when a card is placed on a card, it needs to update its parent with itself. when it is removed, its parent needs to be told
+
+card:
+    value (suit and number)
+    parent (card?)
+    child (card?)
+    location: stock, waste, tableau, foundation
+
+does it need to know which tableau or foundation it is in? probably not, since its behaviour can be derived just from its location type
+
+card:
+    can accept
+        false if stock or waste, else needs no child, needs source to be single if foundation, and needs value match based on location
+    can be dragged
+        false if foundation or stock or has child in waste, else check child can drag in tableau (recursive)
+
+so we have cards, spaces and the stock. for the stock, this is something of a unique object - cards within are masked, so its more that it tracks values rather than actual cards. 
+- it might need to indicate its size, optionally
+- when exhausted, it needs to become/be replaced with a space.
+
