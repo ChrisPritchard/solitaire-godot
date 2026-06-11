@@ -131,3 +131,12 @@ so we have cards, spaces and the stock. for the stock, this is something of a un
 - it might need to indicate its size, optionally
 - when exhausted, it needs to become/be replaced with a space.
 
+## dragging and offsets
+
+we could either track an array of dragged cards (sometimes of length one)
+or we could just track the single dragged card, and if that card has children, we'd recalculate their positions as needed
+dragged cards of more than one item can only come from the tableau, which means the offset for each child is fixed.
+we would need to track both the start position of dragging and the mouse offset from that start. this is so that if returning to original position we can gather that. on placement, this is reset to its current position (or null)
+
+possibly we could have a drag state.
+
