@@ -79,12 +79,16 @@ public partial class GameController : Node
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanAccept(draggedCard))
                 {
+                    if(draggedCard == lastWaste)
+                        lastWaste = lastWaste.Parent as Card;
                     draggedCard.ChangeParent(c);
                     c.PositionOnTop(draggedCard);
                     draggedCard = null;
                 }
                 else if (under is Space s && s.CanAccept(draggedCard))
                 {
+                    if(draggedCard == lastWaste)
+                        lastWaste = lastWaste.Parent as Card;
                     draggedCard.ChangeParent(s);
                     s.PositionOnSpace(draggedCard);
                     draggedCard = null;
@@ -143,8 +147,10 @@ public partial class GameController : Node
             CollideWithAreas = true,
             CollideWithBodies = false
         };
+
         var results = GetViewport().World2D.DirectSpaceState.IntersectPoint(query);
         CanvasItem top = null;
+
         foreach (var result in results)
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
