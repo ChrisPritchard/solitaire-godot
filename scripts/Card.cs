@@ -1,7 +1,7 @@
 
-public partial class Card : Sprite2D
+public partial class Card : Sprite2D, ICanParent
 {
-    public GodotObject Parent { get; set; }
+    public ICanParent Parent { get; set; }
     public Card Child { get; set; }
     [Export]
     public LocationType Location { get; set; }
@@ -38,28 +38,20 @@ public partial class Card : Sprite2D
             return other.Suit == Suit && other.Rank == Rank + 1;
         }
         else if (Location == LocationType.Tableau)
-        {
             return Suit%2 != other.Suit%2 && Rank == other.Rank+1;
-        }
 
         return false;
     }
 
-    public void ChangeParent(GodotObject other)
+    public void ChangeParent(ICanParent other)
     {
         if(Parent != null)
-            if(Parent is Card c)
-                c.Child = null;
-            else if(Parent is Space s)
-                s.Child = null;
+            Parent.Child = null;
         Parent = other;
-        if(other is Card c2)
-            c2.Child = this;
-        else if(other is Space s2)
-            s2.Child = this;
+        other.Child = this;
     }
 
-    public void PositionOnTop(Card other)
+    public void PositionChild(Card other)
     {
         if(Location == LocationType.Foundation)
             other.GlobalPosition = GlobalPosition;
@@ -72,7 +64,7 @@ public partial class Card : Sprite2D
         other.Location = Location;
 
         if(other.Child != null)
-            other.PositionOnTop(other.Child);
+            other.PositionChild(other.Child);
     }
 
     public bool CanBeDragged()

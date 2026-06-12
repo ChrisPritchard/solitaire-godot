@@ -31,14 +31,14 @@ public partial class GameController : Node
             var tableau = GetNode<Space>("%Tableau" + i);
             Card last = null;
             for(var j = 0; j < i; j++) {
-                var next = DealCard((CanvasItem)last ?? tableau);
+                var next = DealCard((ICanParent)last ?? tableau);
                 if(next != null)
                     last = next;
             }
         }
     }
 
-    private Card DealCard(CanvasItem parent)
+    private Card DealCard(ICanParent parent)
     {
         if(deck.Count == 0)
             return null;
@@ -47,16 +47,8 @@ public partial class GameController : Node
         var card = cardScene.Instantiate<Card>();
         card.SetFace(Suit, Rank);
         
-        if (parent is Space s)
-        {
-            card.ChangeParent(s);
-            s.PositionOnSpace(card);
-        }
-        else if(parent is Card c)
-        {
-            card.ChangeParent(c);
-            c.PositionOnTop(card);
-        }
+        card.ChangeParent(parent);
+        parent.PositionChild(card);
 
         AddChild(card);
         return card;
@@ -77,27 +69,19 @@ public partial class GameController : Node
             if(draggedCard != null && !mb.Pressed)
             {
                 var under = UnderPoint(mb.GlobalPosition);
-                if (under is Card c && c.CanAccept(draggedCard))
+                if (under is ICanParent p && p.CanAccept(draggedCard))
                 {
                     if(draggedCard == lastWaste)
                         lastWaste = lastWaste.Parent as Card;
-                    draggedCard.ChangeParent(c);
-                    c.PositionOnTop(draggedCard);
-                    draggedCard = null;
-                }
-                else if (under is Space s && s.CanAccept(draggedCard))
-                {
-                    if(draggedCard == lastWaste)
-                        lastWaste = lastWaste.Parent as Card;
-                    draggedCard.ChangeParent(s);
-                    s.PositionOnSpace(draggedCard);
+                    draggedCard.ChangeParent(p);
+                    p.PositionChild(draggedCard);
                     draggedCard = null;
                 }
                 else
                 {
                     draggedCard.GlobalPosition = dragStart;
                     if(draggedCard.Child != null)
-                        draggedCard.PositionOnTop(draggedCard.Child);
+                        draggedCard.PositionChild(draggedCard.Child);
                     draggedCard.ZIndex = startZIndex;
                     draggedCard = null;
                 }
@@ -134,7 +118,7 @@ public partial class GameController : Node
             draggedCard.ZIndex = dragZIndex;
             draggedCard.GlobalPosition = mm.GlobalPosition + dragOffset;
             if(draggedCard.Child != null)
-                draggedCard.PositionOnTop(draggedCard.Child);
+                draggedCard.PositionChild(draggedCard.Child);
         }
     }
 

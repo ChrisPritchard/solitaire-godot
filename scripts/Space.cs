@@ -1,5 +1,5 @@
 
-public partial class Space : Sprite2D
+public partial class Space : Sprite2D, ICanParent
 {
     public Card Child { get; set; }
     [Export]
@@ -14,7 +14,7 @@ public partial class Space : Sprite2D
         return true;
     }
     
-    public void PositionOnSpace(Card other)
+    public void PositionChild(Card other)
     {
         other.GlobalPosition = GlobalPosition;
         other.ZIndex = ZIndex + 1;
