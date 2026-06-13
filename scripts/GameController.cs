@@ -76,9 +76,15 @@ public partial class GameController : Node
             var tweener = CreateTween();
             var end = next.GlobalPosition;
             var endZ = next.ZIndex;
-            next.GlobalPosition = cardSpawn;
-            next.ZIndex = 1000;
-            tweener.TweenProperty(next, "global_position", end, 0.1f).SetDelay(delay);
+            next.Visible = false;
+            
+            tweener.TweenInterval(delay);
+            tweener.TweenCallback(Callable.From(() => {
+                next.GlobalPosition = cardSpawn;
+                next.ZIndex = 1000;
+                next.Visible = true;
+            }));
+            tweener.TweenProperty(next, "global_position", end, 0.1f);
             tweener.Finished += () => { next.ZIndex = endZ; Sfx.SFX.Deal(); };
             delay += 0.1f;
         }

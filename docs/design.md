@@ -174,3 +174,9 @@ for final positions:
 - any given 'deal' is effectively instant, so the positions are set
 - once the deal is done (initial shuffle, or stock drop) we could do the moving then
 - so enqueue cards for dealing as they are created, then spin off the tweens to move them
+
+todo
+- card not shown til move
+- some sort of easing?
+- animation on card reset
+- config start for animation
