@@ -47,8 +47,11 @@ public partial class GameController : Node
         var card = cardScene.Instantiate<Card>();
         card.SetFace(Suit, Rank);
         
-        card.ChangeParent(parent);
-        parent.PositionChild(card);
+        if(parent != null)
+        {
+            card.ChangeParent(parent);
+            parent.PositionChild(card);
+        }
 
         AddChild(card);
         return card;
