@@ -1,12 +1,15 @@
 
 
 using System.Collections.Generic;
+using System.Threading;
 
 public partial class GameController : Node
 {
     readonly Queue<(int Suit, int Rank)> deck = [];
 
     private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
+
+    private Vector2 cardSpawn;
 
     public override void _Ready()
     {
@@ -24,6 +27,8 @@ public partial class GameController : Node
             allCards.RemoveAt(index);
         }
 
+        cardSpawn = GetNode<Stock>("%Stock").GlobalPosition;
+
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
             var tableau = GetNode<Space>("%Tableau" + i);
@@ -34,6 +39,8 @@ public partial class GameController : Node
                     last = next;
             }
         }
+
+        AnimateCards();
     }
 
     private Card DealCard(ICanParent parent)
@@ -52,8 +59,29 @@ public partial class GameController : Node
         }
 
         AddChild(card);
-        Sfx.SFX.Deal();
+        //Sfx.SFX.Deal();
+
+        dealer.Enqueue(card);
+
         return card;
+    }
+
+    private readonly Queue<Card> dealer = [];
+
+    private void AnimateCards()
+    {
+        var delay = 0.0f;
+        while(dealer.TryDequeue(out Card next))
+        {
+            var tweener = CreateTween();
+            var end = next.GlobalPosition;
+            var endZ = next.ZIndex;
+            next.GlobalPosition = cardSpawn;
+            next.ZIndex = 1000;
+            tweener.TweenProperty(next, "global_position", end, 0.1f).SetDelay(delay);
+            tweener.Finished += () => { next.ZIndex = endZ; Sfx.SFX.Deal(); };
+            delay += 0.1f;
+        }
     }
 
     Card lastWaste;
@@ -92,6 +120,7 @@ public partial class GameController : Node
                         }
                         lastWaste = next;
                     }
+                    AnimateCards();
                     if(deck.Count <= 3)
                         s.QueueFree();
                 }

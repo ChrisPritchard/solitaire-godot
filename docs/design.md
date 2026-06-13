@@ -160,3 +160,17 @@ instant card appearance can be replaced with twining movement (disabling interac
 a hint option, showing what can be moved, possibly with some effect on cards
 
 game over, reset options, win tally
+
+## dealing
+
+idea is to have a dealer node create and parent card nodes. when a card is created, its 'queued' for dealing.
+when the queue has items, the dealer dequeues each in turn and moves it to its target location.
+
+we'd want to have an ability to calculate the final, post deal position. posibly we move the spite but not the rest of the card, which would require the card structure to be altered.
+
+then we need to deal in order - if something is tweening already, we need to wait half a second before starting a new one. what is the logic for this exactly?
+
+for final positions:
+- any given 'deal' is effectively instant, so the positions are set
+- once the deal is done (initial shuffle, or stock drop) we could do the moving then
+- so enqueue cards for dealing as they are created, then spin off the tweens to move them
