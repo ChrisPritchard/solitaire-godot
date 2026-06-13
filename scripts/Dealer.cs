@@ -4,8 +4,14 @@ public partial class Dealer : Node
 {
     public bool Dealing => dealing > 0;
 
+    public bool DeckEmpty => deck.Count == 0;
+
+    readonly Queue<(int Suit, int Rank)> deck = [];
+
     [Export]
     public Node2D CardSpawn { get; set; }
+
+    private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
     private int dealing;
 
@@ -13,6 +19,43 @@ public partial class Dealer : Node
     private readonly Queue<Vector2> returnStarts = [];
 
     const int dealerZIndex = 1000;
+
+    public void InitDeck()
+    {
+        // create random deck
+        var allCards = new List<(int Suit, int Rank)>();
+        for (var i = 0; i < 4; i++)
+            for(var j = 1; j < 14; j++)
+                allCards.Add((i, j));
+
+        var random = new Random(1);
+        while (deck.Count < 52)
+        {
+            var index = random.Next(allCards.Count);
+            deck.Enqueue(allCards[index]);
+            allCards.RemoveAt(index);
+        }
+    }
+
+    public Card DealCard(ICanParent parent)
+    {
+        if(deck.Count == 0)
+            return null;
+
+        var (Suit, Rank) = deck.Dequeue();
+        var card = cardScene.Instantiate<Card>();
+        card.SetFace(Suit, Rank);
+        
+        if(parent != null)
+        {
+            card.ChangeParent(parent);
+            parent.PositionChild(card);
+        }
+
+        AddChild(card);
+        QueueDeal(card);
+        return card;
+    }
 
     public void QueueDeal(Card card) => queue.Enqueue(card);
 

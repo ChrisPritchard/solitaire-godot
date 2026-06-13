@@ -1,66 +1,25 @@
 
-
-using System.Collections.Generic;
-using static Sfx;
-
 public partial class GameController : Node
 {
-    readonly Queue<(int Suit, int Rank)> deck = [];
-
-    private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
-
     private Dealer dealer;
 
     public override void _Ready()
     {
-        // create random deck
-        var allCards = new List<(int Suit, int Rank)>();
-        for (var i = 0; i < 4; i++)
-            for(var j = 1; j < 14; j++)
-                allCards.Add((i, j));
-
-        var random = new Random(1);
-        while (deck.Count < 52)
-        {
-            var index = random.Next(allCards.Count);
-            deck.Enqueue(allCards[index]);
-            allCards.RemoveAt(index);
-        }
-
         dealer = GetNode<Dealer>("%Dealer");
+        dealer.InitDeck();
 
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
             var tableau = GetNode<Space>("%Tableau" + i);
             Card last = null;
             for(var j = 0; j < i; j++) {
-                var next = DealCard((ICanParent)last ?? tableau);
+                var next = dealer.DealCard((ICanParent)last ?? tableau);
                 if(next != null)
                     last = next;
             }
         }
 
         dealer.AnimateDeal();
-    }
-
-    private Card DealCard(ICanParent parent)
-    {
-        if(deck.Count == 0)
-            return null;
-
-        var (Suit, Rank) = deck.Dequeue();
-        var card = cardScene.Instantiate<Card>();
-        card.SetFace(Suit, Rank);
-        
-        if(parent != null)
-        {
-            card.ChangeParent(parent);
-            parent.PositionChild(card);
-        }
-
-        AddChild(card);
-        dealer.QueueDeal(card);
-        return card;
     }
 
     Card lastWaste;
@@ -97,7 +56,7 @@ public partial class GameController : Node
                 {
                     for(var i = 0; i < 3; i++)
                     {
-                        var next = DealCard(lastWaste);
+                        var next = dealer.DealCard(lastWaste);
                         if(next != null && lastWaste == null)
                         {
                             next.GlobalPosition = GetNode<Area2D>("%Waste").GlobalPosition;
@@ -106,7 +65,7 @@ public partial class GameController : Node
                         lastWaste = next;
                     }
                     dealer.AnimateDeal();
-                    if(deck.Count <= 3)
+                    if(dealer.DeckEmpty)
                         s.QueueFree();
                 }
             }
