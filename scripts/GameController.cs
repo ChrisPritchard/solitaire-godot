@@ -52,6 +52,7 @@ public partial class GameController : Node
         }
 
         AddChild(card);
+        Sfx.SFX.Deal();
         return card;
     }
 
