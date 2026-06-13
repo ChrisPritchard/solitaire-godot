@@ -15,6 +15,7 @@ public class DragState
         dragStart = card.GlobalPosition;
         dragOffset = card.GlobalPosition - dragPoint;
         Card = card;
+        Sfx.SFX.Drag();
     }
 
     public void Update(Vector2 dragPoint)
@@ -32,6 +33,7 @@ public class DragState
         if(Card.Child != null)
             Card.PositionChild(Card.Child);
         Card = null;
+        Sfx.SFX.Drop();
     }
 
     public void Conclude(ICanParent parent)
@@ -39,5 +41,6 @@ public class DragState
         Card.ChangeParent(parent);
         parent.PositionChild(Card);
         Card = null;
+        Sfx.SFX.Drop();
     }
 }

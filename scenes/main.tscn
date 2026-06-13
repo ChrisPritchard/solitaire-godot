@@ -1,14 +1,31 @@
 [gd_scene format=3 uid="uid://155xx7s6y6ta"]
 
 [ext_resource type="Script" uid="uid://2y0uxyuaperl" path="res://scripts/GameController.cs" id="1_o5qli"]
+[ext_resource type="Script" uid="uid://ot7nk5b4hhtd" path="res://scripts/Sfx.cs" id="2_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://c6m0h2qsosjbe" path="res://scenes/space.tscn" id="2_sugp2"]
 [ext_resource type="PackedScene" uid="uid://cjqjbb4obdk0r" path="res://scenes/stock.tscn" id="3_sugp2"]
+[ext_resource type="AudioStream" uid="uid://lt0xop2u3o1y" path="res://assets/audio/card-place-1.ogg" id="3_tipki"]
+[ext_resource type="AudioStream" uid="uid://mbf6j7ueirwk" path="res://assets/audio/card-slide-1.ogg" id="4_85g3d"]
+[ext_resource type="Texture2D" uid="uid://ciqf0nxyyxmqo" path="res://assets/felt_green.jpg" id="5_choun"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(34.111847, 51.88983)
 
 [node name="Main" type="Node2D" unique_id=763680367]
 script = ExtResource("1_o5qli")
+
+[node name="Sfx" type="Node" parent="." unique_id=210924191]
+script = ExtResource("2_o6xl0")
+
+[node name="Drag" type="AudioStreamPlayer" parent="Sfx" unique_id=2050530440]
+stream = ExtResource("3_tipki")
+
+[node name="Drop" type="AudioStreamPlayer" parent="Sfx" unique_id=268158730]
+stream = ExtResource("4_85g3d")
+
+[node name="FeltGreen" type="Sprite2D" parent="." unique_id=1516659185]
+position = Vector2(586, 512)
+texture = ExtResource("5_choun")
 
 [node name="Foundation1" parent="." unique_id=1762924900 instance=ExtResource("2_sugp2")]
 unique_name_in_owner = true

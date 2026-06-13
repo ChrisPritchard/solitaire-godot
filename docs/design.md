@@ -142,16 +142,16 @@ possibly we could have a drag state.
 
 ## simplification, next steps
 
-stacktarget as a shared version of card and space. card, space and stock are the three 'things' in the world, though stock can't be a parent or dragged, and is just used to trigger to waste actions
+DONE stacktarget as a shared version of card and space. card, space and stock are the three 'things' in the world, though stock can't be a parent or dragged, and is just used to trigger to waste actions
 - some issues: only cards can be placed, which causes a circular reference if they share the base type
 - could create a gameobject class, instead of stack target, which also allows for canbedragged
     - spaces and the stock would return no for this
     - stock could also use this, though it has no need for the location property
-    - posibly location is not defined on game object
+    - possibly location is not defined on game object
 
-should show zorders on cards - and sort font display - to debug z order issues
+FIXED should show zorders on cards - and sort font display - to debug z order issues
 
-could move dragging state into its own section, to simplify reset and apply operations
+DONE could move dragging state into its own section, to simplify reset and apply operations
 
 need to add sounds
 
