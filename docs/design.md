@@ -153,9 +153,9 @@ FIXED should show zorders on cards - and sort font display - to debug z order is
 
 DONE could move dragging state into its own section, to simplify reset and apply operations
 
-need to add sounds
+DONE need to add sounds
 
-instant card appearance can be replaced with twining movement (disabling interaction while this happens)
+DONE instant card appearance can be replaced with twining movement (disabling interaction while this happens)
 
 a hint option, showing what can be moved, possibly with some effect on cards
 
@@ -176,7 +176,7 @@ for final positions:
 - so enqueue cards for dealing as they are created, then spin off the tweens to move them
 
 todo
-- card not shown til move
+- DONE card not shown til move
 - some sort of easing?
-- animation on card reset
-- config start for animation
+- DONE animation on card reset
+- DONE config start for animation
