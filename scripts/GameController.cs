@@ -1,7 +1,7 @@
 
 
 using System.Collections.Generic;
-using System.Threading;
+using static Sfx;
 
 public partial class GameController : Node
 {
@@ -9,7 +9,7 @@ public partial class GameController : Node
 
     private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
-    private Vector2 cardSpawn;
+    private Dealer dealer;
 
     public override void _Ready()
     {
@@ -27,7 +27,7 @@ public partial class GameController : Node
             allCards.RemoveAt(index);
         }
 
-        cardSpawn = GetNode<Stock>("%Stock").GlobalPosition;
+        dealer = GetNode<Dealer>("%Dealer");
 
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
@@ -40,7 +40,7 @@ public partial class GameController : Node
             }
         }
 
-        AnimateCards();
+        dealer.AnimateDeal();
     }
 
     private Card DealCard(ICanParent parent)
@@ -59,42 +59,8 @@ public partial class GameController : Node
         }
 
         AddChild(card);
-        //Sfx.SFX.Deal();
-
-        dealer.Enqueue(card);
-
+        dealer.QueueDeal(card);
         return card;
-    }
-
-    private int dealing = 0;
-    private readonly Queue<Card> dealer = [];
-
-    private void AnimateCards()
-    {
-        var delay = 0.0f;
-        while(dealer.TryDequeue(out Card next))
-        {
-            dealing++;
-            var tweener = CreateTween();
-            var end = next.GlobalPosition;
-            var endZ = next.ZIndex;
-            next.Visible = false;
-            
-            tweener.TweenInterval(delay);
-            tweener.TweenCallback(Callable.From(() => {
-                next.GlobalPosition = cardSpawn;
-                next.ZIndex = 1000;
-                next.Visible = true;
-            }));
-            tweener.TweenProperty(next, "global_position", end, 0.1f);
-            tweener.Finished += () => 
-            { 
-                next.ZIndex = endZ; 
-                Sfx.SFX.Deal(); 
-                dealing--;
-            };
-            delay += 0.1f;
-        }
     }
 
     Card lastWaste;
@@ -102,7 +68,7 @@ public partial class GameController : Node
 
     public override void _Input(InputEvent @event)
     {
-        if(dealing > 0)
+        if(dealer.Dealing)
             return;
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left)
         {
@@ -116,7 +82,11 @@ public partial class GameController : Node
                     dragState.Conclude(p);
                 }
                 else // return to start
+                {
+                    dealer.QueueReturn(dragState.Card);
                     dragState.Reset();
+                    dealer.AnimateReturn();
+                }
             } 
             else if (!dragState.Active && mb.Pressed)
             {
@@ -135,7 +105,7 @@ public partial class GameController : Node
                         }
                         lastWaste = next;
                     }
-                    AnimateCards();
+                    dealer.AnimateDeal();
                     if(deck.Count <= 3)
                         s.QueueFree();
                 }

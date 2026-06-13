@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://mbf6j7ueirwk" path="res://assets/audio/card-slide-1.ogg" id="4_85g3d"]
 [ext_resource type="Texture2D" uid="uid://ciqf0nxyyxmqo" path="res://assets/felt_green.jpg" id="5_choun"]
 [ext_resource type="AudioStream" uid="uid://bv4xfprt346qb" path="res://assets/audio/card-slide-2.ogg" id="5_tipki"]
+[ext_resource type="Script" uid="uid://ytvcr6fmt03c" path="res://scripts/Dealer.cs" id="6_85g3d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(34.111847, 51.88983)
@@ -26,6 +27,11 @@ stream = ExtResource("4_85g3d")
 
 [node name="Deal" type="AudioStreamPlayer" parent="Sfx" unique_id=1633433512]
 stream = ExtResource("5_tipki")
+
+[node name="Dealer" type="Node" parent="." unique_id=770859476 node_paths=PackedStringArray("CardSpawn")]
+unique_name_in_owner = true
+script = ExtResource("6_85g3d")
+CardSpawn = NodePath("../Stock")
 
 [node name="FeltGreen" type="Sprite2D" parent="." unique_id=1516659185]
 position = Vector2(586, 512)
