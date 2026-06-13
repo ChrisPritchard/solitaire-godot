@@ -6,7 +6,7 @@ public partial class GameController : Node
 {
     readonly Queue<(int Suit, int Rank)> deck = [];
 
-    private PackedScene cardScene;
+    private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
     public override void _Ready()
     {
@@ -23,8 +23,6 @@ public partial class GameController : Node
             deck.Enqueue(allCards[index]);
             allCards.RemoveAt(index);
         }
-
-        cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
@@ -58,47 +56,29 @@ public partial class GameController : Node
     }
 
     Card lastWaste;
-
-    Card draggedCard;
-    Vector2 dragStart, dragOffset;
-    int startZIndex;
-
-    const int dragZIndex = 1000;
+    readonly DragState dragState = new ();
 
     public override void _Input(InputEvent @event)
     {
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left)
         {
-            if(draggedCard != null && !mb.Pressed)
+            if(dragState.Active && !mb.Pressed)
             {
                 var under = UnderPoint(mb.GlobalPosition);
-                if (under is ICanParent p && p.CanAccept(draggedCard))
+                if (under is ICanParent p && p.CanAccept(dragState.Card))
                 {
-                    if(draggedCard == lastWaste)
+                    if(dragState.Card == lastWaste)
                         lastWaste = lastWaste.Parent as Card;
-                    draggedCard.ChangeParent(p);
-                    p.PositionChild(draggedCard);
-                    draggedCard = null;
+                    dragState.Conclude(p);
                 }
-                else
-                {
-                    draggedCard.GlobalPosition = dragStart;
-                    if(draggedCard.Child != null)
-                        draggedCard.PositionChild(draggedCard.Child);
-                    draggedCard.ZIndex = startZIndex;
-                    draggedCard = null;
-                }
+                else // return to start
+                    dragState.Reset();
             } 
-            else if (draggedCard == null && mb.Pressed)
+            else if (!dragState.Active && mb.Pressed)
             {
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanBeDragged())
-                {
-                    startZIndex = c.ZIndex;
-                    dragStart = c.GlobalPosition;
-                    dragOffset = c.GlobalPosition - mb.GlobalPosition;
-                    draggedCard = c;
-                }
+                    dragState.Init(c, mb.GlobalPosition);
                 else if (under is Stock s)
                 {
                     for(var i = 0; i < 3; i++)
@@ -116,13 +96,8 @@ public partial class GameController : Node
                 }
             }
         }
-        else if(draggedCard != null && @event is InputEventMouseMotion mm)
-        {
-            draggedCard.ZIndex = dragZIndex;
-            draggedCard.GlobalPosition = mm.GlobalPosition + dragOffset;
-            if(draggedCard.Child != null)
-                draggedCard.PositionChild(draggedCard.Child);
-        }
+        else if(dragState.Active && @event is InputEventMouseMotion mm)
+            dragState.Update(mm.GlobalPosition);
     }
 
     private CanvasItem UnderPoint(Vector2 point)
@@ -143,7 +118,7 @@ public partial class GameController : Node
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
                 var parent = area.GetParent<GodotObject>();
-                if(parent is Card c && (draggedCard == null || draggedCard != c) && (top == null || top.ZIndex < c.ZIndex))
+                if(parent is Card c && dragState.Card != c && (top == null || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
                     top = s;
