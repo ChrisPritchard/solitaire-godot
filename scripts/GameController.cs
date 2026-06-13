@@ -66,6 +66,7 @@ public partial class GameController : Node
         return card;
     }
 
+    private int dealing = 0;
     private readonly Queue<Card> dealer = [];
 
     private void AnimateCards()
@@ -73,6 +74,7 @@ public partial class GameController : Node
         var delay = 0.0f;
         while(dealer.TryDequeue(out Card next))
         {
+            dealing++;
             var tweener = CreateTween();
             var end = next.GlobalPosition;
             var endZ = next.ZIndex;
@@ -85,7 +87,12 @@ public partial class GameController : Node
                 next.Visible = true;
             }));
             tweener.TweenProperty(next, "global_position", end, 0.1f);
-            tweener.Finished += () => { next.ZIndex = endZ; Sfx.SFX.Deal(); };
+            tweener.Finished += () => 
+            { 
+                next.ZIndex = endZ; 
+                Sfx.SFX.Deal(); 
+                dealing--;
+            };
             delay += 0.1f;
         }
     }
@@ -95,6 +102,8 @@ public partial class GameController : Node
 
     public override void _Input(InputEvent @event)
     {
+        if(dealing > 0)
+            return;
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left)
         {
             if(dragState.Active && !mb.Pressed)
