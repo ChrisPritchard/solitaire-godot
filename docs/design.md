@@ -157,9 +157,12 @@ DONE need to add sounds
 
 DONE instant card appearance can be replaced with twining movement (disabling interaction while this happens)
 
-a hint option, showing what can be moved, possibly with some effect on cards
+DONE a hint option, showing what can be moved, possibly with some effect on cards
 
-game over, reset options, win tally
+victory 
+DONE reset options, 
+auto-foundation
+win tally
 
 ## dealing
 
