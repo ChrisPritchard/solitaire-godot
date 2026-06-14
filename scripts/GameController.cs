@@ -78,7 +78,7 @@ public partial class GameController : Node
                     }
                     dealer.AnimateDeal();
                     if(dealer.DeckEmpty)
-                        s.QueueFree();
+                        s.Visible = false;
                 }
             }
         }

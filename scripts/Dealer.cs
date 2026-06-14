@@ -9,10 +9,9 @@ public partial class Dealer : Node
 
     readonly Queue<(int Suit, int Rank)> deck = [];
 
-    [Export]
-    public Node2D CardSpawn { get; set; }
-
     private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
+
+    private Stock stock;
 
     private int dealing;
 
@@ -22,6 +21,11 @@ public partial class Dealer : Node
     const int dealerZIndex = 1000;
 
     private int lastSeed;
+
+    public override void _Ready()
+    {
+        stock = GetParent().GetNode<Stock>("%Stock");
+    }
 
     public void InitDeck(bool sameSeed)
     {
@@ -34,6 +38,8 @@ public partial class Dealer : Node
         for (var i = 0; i < 4; i++)
             for(var j = 1; j < 14; j++)
                 allCards.Add((i, j));
+
+        stock.Visible = true;
 
         if(!sameSeed)
             lastSeed = new Random().Next();
@@ -94,7 +100,7 @@ public partial class Dealer : Node
             
             tweener.TweenInterval(delay);
             tweener.TweenCallback(Callable.From(() => {
-                next.GlobalPosition = CardSpawn.GlobalPosition;
+                next.GlobalPosition = stock.GlobalPosition;
                 next.ZIndex = dealerZIndex;
                 next.Visible = true;
             }));
