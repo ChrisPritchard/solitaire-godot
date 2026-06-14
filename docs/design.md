@@ -183,3 +183,11 @@ todo
 - some sort of easing?
 - DONE animation on card reset
 - DONE config start for animation
+
+## final tasks
+
+- win tracking
+- auto foundation
+- victory check and banner
+- res fixes
+- builds

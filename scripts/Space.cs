@@ -7,7 +7,6 @@ public partial class Space : Sprite2D, ICanParent
 
     public bool CanAccept(Card other)
     {
-        GD.Print(Name);
         if (Child != null)
             return false;
         if (Location == LocationType.Foundation)
