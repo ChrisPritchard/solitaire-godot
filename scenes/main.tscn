@@ -104,3 +104,52 @@ position = Vector2(920, 250)
 [node name="Stock" parent="." unique_id=1420905260 instance=ExtResource("3_sugp2")]
 unique_name_in_owner = true
 position = Vector2(200, 100)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1465932366]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=234202159]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -209.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/VBoxContainer" unique_id=1411301857]
+layout_mode = 2
+alignment = 2
+
+[node name="WinsLabel" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer2" unique_id=709113642]
+layout_mode = 2
+text = "Wins:"
+
+[node name="WinsValue" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer2" unique_id=1541901605]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+
+[node name="Hint" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=1074411509]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Get Hint"
+
+[node name="Spacer2" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=1409531979]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="NewGame" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=130583238]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "New Game"
+
+[node name="Seed" type="CheckBox" parent="CanvasLayer/VBoxContainer" unique_id=833956294]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Same Seed"
