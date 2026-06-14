@@ -18,9 +18,12 @@ public partial class GameController : Node
 
         GetNode<Button>("%Hint").Pressed += () => {
             var allCards = dealer.GetChildren().OfType<Card>().ToList();
+            var allSpaces = GetChildren().OfType<Space>().ToList();
             foreach(var c in allCards.Where(c => c.CanBeDragged()))
             {
                 if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
+                    c.Flash();
+                else if(allSpaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
                     c.Flash();
             }
         };
@@ -116,7 +119,9 @@ public partial class GameController : Node
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
-                var parent = area.GetParent<GodotObject>();
+                var parent = area.GetParent<CanvasItem>();
+                if(!parent.Visible)
+                    continue;
                 if(parent is Card c && dragState.Card != c && (top == null || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
