@@ -136,7 +136,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 text = "Get Hint"
 
-[node name="Spacer2" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=1409531979]
+[node name="Spacer" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=1409531979]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 size_flags_vertical = 3
@@ -148,7 +148,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 text = "New Game"
 
-[node name="Seed" type="CheckBox" parent="CanvasLayer/VBoxContainer" unique_id=833956294]
+[node name="SameSeed" type="CheckBox" parent="CanvasLayer/VBoxContainer" unique_id=833956294]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8

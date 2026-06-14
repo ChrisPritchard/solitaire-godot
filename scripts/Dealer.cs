@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class Dealer : Node
 {
@@ -20,15 +21,24 @@ public partial class Dealer : Node
 
     const int dealerZIndex = 1000;
 
-    public void InitDeck()
+    private int lastSeed;
+
+    public void InitDeck(bool sameSeed)
     {
+        deck.Clear();
+        foreach(var card in GetChildren().OfType<Card>())
+            card.QueueFree();
+
         // create random deck
         var allCards = new List<(int Suit, int Rank)>();
         for (var i = 0; i < 4; i++)
             for(var j = 1; j < 14; j++)
                 allCards.Add((i, j));
 
-        var random = new Random(1);
+        if(!sameSeed)
+            lastSeed = new Random().Next();
+        var random = new Random(lastSeed);
+
         while (deck.Count < 52)
         {
             var index = random.Next(allCards.Count);

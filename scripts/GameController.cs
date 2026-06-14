@@ -6,7 +6,19 @@ public partial class GameController : Node
     public override void _Ready()
     {
         dealer = GetNode<Dealer>("%Dealer");
-        dealer.InitDeck();
+        NewGame(false);
+
+        GetNode<Button>("%NewGame").Pressed += () => {
+            if(dealer.Dealing)
+                return;
+            NewGame(GetNode<CheckBox>("%SameSeed").ButtonPressed);
+        };
+    }
+
+    private void NewGame(bool sameSeed)
+    {
+        lastWaste = null;
+        dealer.InitDeck(sameSeed);
 
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
