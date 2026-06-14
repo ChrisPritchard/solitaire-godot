@@ -1,4 +1,6 @@
 
+using System.Linq;
+
 public partial class GameController : Node
 {
     private Dealer dealer;
@@ -12,6 +14,15 @@ public partial class GameController : Node
             if(dealer.Dealing)
                 return;
             NewGame(GetNode<CheckBox>("%SameSeed").ButtonPressed);
+        };
+
+        GetNode<Button>("%Hint").Pressed += () => {
+            var allCards = dealer.GetChildren().OfType<Card>().ToList();
+            foreach(var c in allCards.Where(c => c.CanBeDragged()))
+            {
+                if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
+                    c.Flash();
+            }
         };
     }
 
@@ -63,7 +74,9 @@ public partial class GameController : Node
             {
                 var under = UnderPoint(mb.GlobalPosition);
                 if (under is Card c && c.CanBeDragged())
+                {
                     dragState.Init(c, mb.GlobalPosition);
+                }
                 else if (under is Stock s)
                 {
                     for(var i = 0; i < 3; i++)

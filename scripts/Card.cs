@@ -80,4 +80,11 @@ public partial class Card : Sprite2D, ICanParent
 
         return false;
     }
+
+    public void Flash()
+    {
+        var tween = CreateTween();
+        tween.TweenProperty(this, "modulate", Colors.Magenta, 0.2f);
+        tween.TweenProperty(this, "modulate", Colors.White, 0.2f);
+    }
 }
