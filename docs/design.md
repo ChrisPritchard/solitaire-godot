@@ -186,8 +186,9 @@ todo
 
 ## final tasks
 
-- win tracking
 - auto foundation
-- victory check and banner
-- res fixes
+- DONE victory check and banner
+- win count tracking
 - builds
+
+null reference issues, occasional space non-acceptance, rendering issues

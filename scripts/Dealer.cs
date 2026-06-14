@@ -43,6 +43,7 @@ public partial class Dealer : Node
 
         if(!sameSeed)
             lastSeed = new Random().Next();
+        GD.Print("using seed ", lastSeed);
         var random = new Random(lastSeed);
 
         while (deck.Count < 52)

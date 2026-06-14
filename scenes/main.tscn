@@ -28,10 +28,9 @@ stream = ExtResource("4_85g3d")
 [node name="Deal" type="AudioStreamPlayer" parent="Sfx" unique_id=1633433512]
 stream = ExtResource("5_tipki")
 
-[node name="Dealer" type="Node" parent="." unique_id=770859476 node_paths=PackedStringArray("CardSpawn")]
+[node name="Dealer" type="Node" parent="." unique_id=770859476]
 unique_name_in_owner = true
 script = ExtResource("6_85g3d")
-CardSpawn = NodePath("../Stock")
 
 [node name="FeltGreen" type="Sprite2D" parent="." unique_id=1516659185]
 position = Vector2(586, 512)
@@ -153,3 +152,25 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 text = "Same Seed"
+
+[node name="Victory" type="VBoxContainer" parent="CanvasLayer" unique_id=192031086]
+unique_name_in_owner = true
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="CanvasLayer/Victory" unique_id=2053435467]
+layout_mode = 2
+theme_override_font_sizes/font_size = 144
+text = "YOU WIN"

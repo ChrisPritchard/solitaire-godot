@@ -4,10 +4,12 @@ using System.Linq;
 public partial class GameController : Node
 {
     private Dealer dealer;
+    private Container victory;
 
     public override void _Ready()
     {
         dealer = GetNode<Dealer>("%Dealer");
+        victory = GetNode<Container>("%Victory");
         NewGame(false);
 
         GetNode<Button>("%NewGame").Pressed += () => {
@@ -17,6 +19,8 @@ public partial class GameController : Node
         };
 
         GetNode<Button>("%Hint").Pressed += () => {
+            if (victory.Visible)
+                return;
             var allCards = dealer.GetChildren().OfType<Card>().ToList();
             var allSpaces = GetChildren().OfType<Space>().ToList();
             foreach(var c in allCards.Where(c => c.CanBeDragged()))
@@ -32,6 +36,7 @@ public partial class GameController : Node
     private void NewGame(bool sameSeed)
     {
         lastWaste = null;
+        victory.Visible = false;
         dealer.InitDeck(sameSeed);
 
         // deal tableaus
@@ -53,8 +58,9 @@ public partial class GameController : Node
 
     public override void _Input(InputEvent @event)
     {
-        if(dealer.Dealing)
+        if(dealer.Dealing || victory.Visible)
             return;
+
         if (@event is InputEventMouseButton mb && mb.ButtonIndex == MouseButton.Left)
         {
             if(dragState.Active && !mb.Pressed)
@@ -65,6 +71,8 @@ public partial class GameController : Node
                     if(dragState.Card == lastWaste)
                         lastWaste = lastWaste.Parent as Card;
                     dragState.Conclude(p);
+                    if (p is Space s && s.Location == LocationType.Foundation)
+                        CheckForWin();
                 }
                 else // return to start
                 {
@@ -131,5 +139,11 @@ public partial class GameController : Node
             }
         }
         return top;
+    }
+
+    private void CheckForWin()
+    {
+        if(dealer.GetChildren().OfType<Card>().All(o => o.Location == LocationType.Foundation))
+            victory.Show();
     }
 }
