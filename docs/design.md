@@ -192,3 +192,6 @@ todo
 - builds
 
 null reference issues, occasional space non-acceptance, rendering issues
+
+sometimes top foundation does not accept cards, and spare does not either.
+render all under point?

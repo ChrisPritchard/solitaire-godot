@@ -1,4 +1,6 @@
 
+using System.Security.Cryptography.X509Certificates;
+
 public partial class Card : Sprite2D, ICanParent
 {
     public ICanParent Parent { get; set; }
@@ -20,9 +22,34 @@ public partial class Card : Sprite2D, ICanParent
         Suit = suit;
         Rank = rank;
 
+        SetName();
+
         Texture = ResourceLoader.Load<Texture2D>("res://assets/card-suites.png");
         RegionEnabled = true;
         RegionRect = SpriteRegions.CardIndexes[Suit][Rank];
+    }
+
+    private void SetName()
+    {
+        var rankLabel = Rank.ToString();
+        if(Rank == 1)
+            rankLabel = "Ace";
+        else if(Rank == 11)
+            rankLabel = "Jack";
+        else if(Rank == 12)
+            rankLabel = "Queen";
+        else if(Rank == 13)
+            rankLabel = "King";
+
+        var suitLabel = "Hearts";
+        if(Suit == 1)
+            suitLabel = "Spades";
+        else if(Suit == 2)
+            suitLabel = "Diamonds";
+        else if(Suit == 3)
+            suitLabel = "Clubs";
+
+        Name = $"{rankLabel} of {suitLabel}";
     }
 
     public bool CanAccept(Card other)

@@ -1,4 +1,5 @@
 
+using System.Collections.Generic;
 using System.Linq;
 
 public partial class GameController : Node
@@ -37,6 +38,8 @@ public partial class GameController : Node
     {
         lastWaste = null;
         victory.Visible = false;
+        GetChildren().OfType<Space>().ToList().ForEach(s => s.Child = null);
+        GetNode<Stock>("%Stock").Visible = true;
         dealer.InitDeck(sameSeed);
 
         // deal tableaus
@@ -123,12 +126,15 @@ public partial class GameController : Node
         var results = GetViewport().World2D.DirectSpaceState.IntersectPoint(query);
         CanvasItem top = null;
 
+        var found = new List<string>();
+
         foreach (var result in results)
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
                 var parent = area.GetParent();
-                if(parent is Card c && dragState.Card != c && (top == null || top.ZIndex < c.ZIndex))
+                found.Add(parent.Name);
+                if(parent is Card c && dragState.Card != c && (top == null || top is not Card _ || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
                     top = s;
@@ -136,6 +142,15 @@ public partial class GameController : Node
                     top = o;
             }
         }
+        
+        var debug = "under: ";
+        foreach(var s in found)
+            if (s == top?.Name)
+                debug += $"[{s} (top)]";
+            else
+                debug += $"[{s}]";
+        GD.Print(debug);
+
         return top;
     }
 

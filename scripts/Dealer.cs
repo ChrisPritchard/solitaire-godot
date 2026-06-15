@@ -39,8 +39,6 @@ public partial class Dealer : Node
             for(var j = 1; j < 14; j++)
                 allCards.Add((i, j)); 
 
-        stock.Visible = true;
-
         if(!sameSeed)
             lastSeed = new Random().Next();
         GD.Print("using seed ", lastSeed);
