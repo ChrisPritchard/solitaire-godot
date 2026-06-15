@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "New Game Project", "New Game Project.csproj", "{C433EF74-0EE8-4820-8C61-6E526DF7DEB2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolitaireGodot", "SolitaireGodot.csproj", "{C433EF74-0EE8-4820-8C61-6E526DF7DEB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
