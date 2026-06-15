@@ -1,0 +1,17 @@
+{
+    "explorer.fileNesting.expand": false,
+    "explorer.fileNesting.patterns": {
+        "*.cs": "$(capture).*.uid",
+        "*.gdshader": "$(capture).*.uid",
+        "*.png": "$(capture).*.import",
+        "*.ogg": "$(capture).*.import",
+        "*.glb": "$(capture).*.import",
+        "*.ttf": "$(capture).*.import"
+    },
+    "explorer.fileNesting.enabled": true,
+    "[csharp]": {
+        "editor.codeActionsOnSave": [
+            "source.organizeImports"
+        ]
+    },
+}
