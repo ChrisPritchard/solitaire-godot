@@ -37,7 +37,7 @@ public partial class Dealer : Node
         var allCards = new List<(int Suit, int Rank)>();
         for (var i = 0; i < 4; i++)
             for(var j = 1; j < 14; j++)
-                allCards.Add((i, j));
+                allCards.Add((i, j)); 
 
         stock.Visible = true;
 
