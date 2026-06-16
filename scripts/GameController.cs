@@ -155,14 +155,11 @@ public partial class GameController : Node
         var results = GetViewport().World2D.DirectSpaceState.IntersectPoint(query);
         CanvasItem top = null;
 
-        var found = new List<string>();
-
         foreach (var result in results)
         {
             if (result["collider"].AsGodotObject() is Area2D area) 
             {
                 var parent = area.GetParent();
-                found.Add(parent.Name);
                 if(parent is Card c && dragState.Card != c && (top == null || top is not Card _ || top.ZIndex < c.ZIndex))
                     top = c;
                 else if(parent is Space s && top == null)
@@ -171,14 +168,6 @@ public partial class GameController : Node
                     top = o;
             }
         }
-        
-        var debug = "under: ";
-        foreach(var s in found)
-            if (s == top?.Name)
-                debug += $"[{s} (top)]";
-            else
-                debug += $"[{s}]";
-        GD.Print(debug);
 
         return top;
     }
