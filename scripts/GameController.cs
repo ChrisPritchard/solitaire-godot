@@ -198,10 +198,10 @@ public partial class GameController : Node
             if(next == lastWaste)
                 lastWaste = lastWaste.Parent as Card;
 
-            next.ChangeParent(top);
-            top.PositionChild(next);
-
-            TryStackOnFoundations();
+            dealer.QueueMove(next, false);
+            next.ChangeParent((ICanParent)top ?? f);
+            ((ICanParent)top ?? f).PositionChild(next);
+            dealer.AnimateMove(false, TryStackOnFoundations);
             return;
         }
     }

@@ -72,7 +72,7 @@ public partial class Dealer : Node
             QueueMove(card.Child, withChild);
     }
 
-    public void AnimateMove(bool withGap)
+    public void AnimateMove(bool withGap, Action onFinished = null)
     {
         if(Dealing)
             return;
@@ -99,6 +99,8 @@ public partial class Dealer : Node
                 next.card.ZIndex = endZ; 
                 Sfx.SFX.Deal(); 
                 dealingCount--;
+                if(dealingCount == 0)
+                    onFinished?.Invoke();
             };
             delay += 0.1f;
         }
