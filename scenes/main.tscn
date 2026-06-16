@@ -133,6 +133,23 @@ layout_mode = 2
 size_flags_horizontal = 8
 text = "Get Hint"
 
+[node name="Spacer2" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=478041443]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Stack" type="Button" parent="CanvasLayer/VBoxContainer" unique_id=130163890]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Auto Stack"
+
+[node name="AlwaysStack" type="CheckBox" parent="CanvasLayer/VBoxContainer" unique_id=195519682]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+text = "Always"
+
 [node name="Spacer" type="Control" parent="CanvasLayer/VBoxContainer" unique_id=1409531979]
 custom_minimum_size = Vector2(0, 10)
 layout_mode = 2

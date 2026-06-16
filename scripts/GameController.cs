@@ -7,6 +7,8 @@ public partial class GameController : Node
     private Dealer dealer;
     private Container victory;
 
+    private bool alwaysStack;
+
     const string configPath = "user://state.sav";
 
     public override void _Ready()
@@ -15,25 +17,7 @@ public partial class GameController : Node
         victory = GetNode<Container>("%Victory");
         NewGame(false);
 
-        GetNode<Button>("%NewGame").Pressed += () => {
-            if(dealer.Dealing)
-                return;
-            NewGame(GetNode<CheckBox>("%SameSeed").ButtonPressed);
-        };
-
-        GetNode<Button>("%Hint").Pressed += () => {
-            if (victory.Visible)
-                return;
-            var allCards = dealer.GetChildren().OfType<Card>().ToList();
-            var allSpaces = GetChildren().OfType<Space>().ToList();
-            foreach(var c in allCards.Where(c => c.CanBeDragged()))
-            {
-                if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
-                    c.Flash();
-                else if(allSpaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
-                    c.Flash();
-            }
-        };
+        ConfigureUI();
 
         var config = new ConfigFile();
         if(config.Load(configPath) == Error.Ok)
@@ -60,6 +44,43 @@ public partial class GameController : Node
         }
 
         dealer.AnimateDeal();
+    }
+
+    private void ConfigureUI()
+    {
+        GetNode<Button>("%NewGame").Pressed += () => {
+            if(dealer.Dealing)
+                return;
+            NewGame(GetNode<CheckBox>("%SameSeed").ButtonPressed);
+        };
+
+        GetNode<Button>("%Hint").Pressed += () => {
+            if (victory.Visible)
+                return;
+            var allCards = dealer.GetChildren().OfType<Card>().ToList();
+            var allSpaces = GetChildren().OfType<Space>().ToList();
+            foreach(var c in allCards.Where(c => c.CanBeDragged()))
+            {
+                if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
+                    c.Flash();
+                else if(allSpaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
+                    c.Flash();
+            }
+        };
+
+        GetNode<Button>("%Stack").Pressed += () => {
+            if(dealer.Dealing || victory.Visible)
+                return;
+            TryStackOnFoundations();
+        };
+
+        GetNode<CheckBox>("%AlwaysStack").Pressed += () => {
+            if(dealer.Dealing || victory.Visible)
+                return;
+            alwaysStack = GetNode<CheckBox>("%AlwaysStack").ButtonPressed;
+            if(alwaysStack)
+                GetNode<Button>("%Stack").Disabled = alwaysStack;
+        };
     }
 
     Card lastWaste;
@@ -114,6 +135,8 @@ public partial class GameController : Node
                         s.Visible = false;
                 }
             }
+            if(alwaysStack)
+                TryStackOnFoundations();
         }
         else if(dragState.Active && @event is InputEventMouseMotion mm)
             dragState.Update(mm.GlobalPosition);
@@ -158,6 +181,59 @@ public partial class GameController : Node
         GD.Print(debug);
 
         return top;
+    }
+
+    private void TryStackOnFoundations()
+    {
+        // find all stackable, like with hint
+        // if any can be placed on foundations, place
+        // when done, recurse
+
+        // or find tops of foundations, then look for draggable instances of the lowest card value
+        var foundations = GetChildren().OfType<Space>().Where(s => s.Location == LocationType.Foundation).ToList();
+        var min = 13;
+        foreach(var f in foundations)
+        {
+            if(f.Child == null)
+            {
+                // search for ace
+                var ace = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == 1 && c.Child == null && c.CanBeDragged()).FirstOrDefault();
+                if(ace != null)
+                {
+                    if(ace == lastWaste)
+                        lastWaste = lastWaste.Parent as Card;
+                    ace.ChangeParent(f);
+                    f.PositionChild(ace);
+                    TryStackOnFoundations();
+                }
+                return;
+            }
+
+            var top = f.Child;
+            while(top.Child != null)
+                top = top.Child;
+            if(top.Rank < min)
+                min = top.Rank;
+        }
+
+        foreach(var f in foundations)
+        {
+            var top = f.Child;
+            while(top.Child != null)
+                top = top.Child;
+            if(top.Rank == min)
+            {
+                var next = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == min && c.Suit == top.Suit && c.Child == null && c.CanBeDragged()).FirstOrDefault();
+                if(next != null)
+                {
+                    if(next == lastWaste)
+                        lastWaste = lastWaste.Parent as Card;
+                    next.ChangeParent(top);
+                    top.PositionChild(next);
+                    TryStackOnFoundations();
+                }
+            }
+        }
     }
 
     private void CheckForWin()
