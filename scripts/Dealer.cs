@@ -3,20 +3,18 @@ using System.Linq;
 
 public partial class Dealer : Node
 {
-    public bool Dealing => dealing > 0;
+    public bool Dealing => dealingCount > 0;
 
     public bool DeckEmpty => deck.Count == 0;
-
-    readonly Queue<(int Suit, int Rank)> deck = [];
 
     private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
     private Stock stock;
 
-    private int dealing;
+    private int dealingCount;
 
-    private readonly Queue<Card> queue = [];
-    private readonly Queue<Vector2> returnStarts = [];
+    private readonly Queue<(int Suit, int Rank)> deck = [];
+    private readonly Queue<(Card card, Vector2 start)> dealQueue = [];
 
     const int dealerZIndex = 1000;
 
@@ -27,13 +25,12 @@ public partial class Dealer : Node
         stock = GetParent().GetNode<Stock>("%Stock");
     }
 
-    public void InitDeck(bool sameSeed)
+    public void ShuffleNewDeck(bool sameSeed)
     {
         deck.Clear();
         foreach(var card in GetChildren().OfType<Card>())
             card.QueueFree();
 
-        // create random deck
         var allCards = new List<(int Suit, int Rank)>();
         for (var i = 0; i < 4; i++)
             for(var j = 1; j < 14; j++)
@@ -52,7 +49,9 @@ public partial class Dealer : Node
         }
     }
 
-    public Card DealCard(ICanParent parent)
+    public List<Card> AllCards() => [.. GetChildren().OfType<Card>()];
+
+    public Card DealCard(ICanParent parent, Vector2 cardSpawn)
     {
         if(deck.Count == 0)
             return null;
@@ -68,79 +67,47 @@ public partial class Dealer : Node
         }
 
         AddChild(card);
-        QueueDeal(card);
+        dealQueue.Enqueue((card, cardSpawn));
         return card;
     }
 
-    public void QueueDeal(Card card) => queue.Enqueue(card);
-
-    public void QueueReturn(Card topCard)
+    public void QueueMove(Card card, bool withChild)
     {
-        queue.Enqueue(topCard);
-        returnStarts.Enqueue(topCard.GlobalPosition);
+        dealQueue.Enqueue((card, card.GlobalPosition));
 
-        if(topCard.Child != null)
-            QueueReturn(topCard.Child);
+        if(withChild && card.Child != null)
+            QueueMove(card.Child, withChild);
     }
 
-    public void AnimateDeal()
+    public void AnimateMove(bool withGap)
     {
         if(Dealing)
             return;
 
         var delay = 0.0f;
-        while(queue.TryDequeue(out Card next))
+        while(dealQueue.TryDequeue(out (Card card, Vector2 start) next))
         {
-            dealing++;
+            dealingCount++;
             var tweener = CreateTween();
-            var end = next.GlobalPosition;
-            var endZ = next.ZIndex;
-            next.Visible = false;
+            var end = next.card.GlobalPosition;
+            var endZ = next.card.ZIndex;
+            next.card.Visible = false;
             
-            tweener.TweenInterval(delay);
+            if(withGap)
+                tweener.TweenInterval(delay);
             tweener.TweenCallback(Callable.From(() => {
-                next.GlobalPosition = stock.GlobalPosition;
-                next.ZIndex = dealerZIndex;
-                next.Visible = true;
+                next.card.GlobalPosition = next.start;
+                next.card.ZIndex = dealerZIndex;
+                next.card.Visible = true;
             }));
-            tweener.TweenProperty(next, "global_position", end, 0.1f);
+            tweener.TweenProperty(next.card, "global_position", end, 0.1f);
             tweener.Finished += () => 
             { 
-                next.ZIndex = endZ; 
+                next.card.ZIndex = endZ; 
                 Sfx.SFX.Deal(); 
-                dealing--;
+                dealingCount--;
             };
             delay += 0.1f;
-        }
-    }
-
-    public void AnimateReturn()
-    {
-        if(Dealing)
-            return;
-
-        while(queue.TryDequeue(out Card next))
-        {
-            dealing++;
-            var start = returnStarts.Dequeue();
-            var tweener = CreateTween();
-            var end = next.GlobalPosition;
-            var endZ = next.ZIndex;
-            next.Visible = false;
-            
-            tweener.TweenCallback(Callable.From(() => {
-                next.GlobalPosition = start;
-                next.ZIndex = dealerZIndex;
-                next.Visible = true;
-            }));
-            tweener.TweenProperty(next, "global_position", end, 0.1f);
-            tweener.Finished += () => 
-            { 
-                next.ZIndex = endZ; 
-                dealing--;
-                if(dealing == 0)
-                    Sfx.SFX.Deal(); 
-            };
         }
     }
 }

@@ -6,8 +6,14 @@ public partial class GameController : Node
 {
     private Dealer dealer;
     private Container victory;
+    private Stock stock;
+    private List<Space> spaces;
+    private List<Space> foundations;
 
     private bool alwaysStack;
+
+    private Card lastWaste;
+    private readonly DragState dragState = new ();
 
     const string configPath = "user://state.sav";
 
@@ -15,6 +21,10 @@ public partial class GameController : Node
     {
         dealer = GetNode<Dealer>("%Dealer");
         victory = GetNode<Container>("%Victory");
+        stock = GetNode<Stock>("%Stock");
+        spaces = [.. GetChildren().OfType<Space>()];
+        foundations = [.. spaces.Where(s => s.Location == LocationType.Foundation)];
+
         NewGame(false);
 
         ConfigureUI();
@@ -28,22 +38,22 @@ public partial class GameController : Node
     {
         lastWaste = null;
         victory.Visible = false;
-        GetChildren().OfType<Space>().ToList().ForEach(s => s.Child = null);
-        GetNode<Stock>("%Stock").Visible = true;
-        dealer.InitDeck(sameSeed);
+        spaces.ForEach(s => s.Child = null);
+        stock.Visible = true;
+        dealer.ShuffleNewDeck(sameSeed);
 
         // deal tableaus
         for (var i = 1; i <= 7; i++) {
             var tableau = GetNode<Space>("%Tableau" + i);
             Card last = null;
             for(var j = 0; j < i; j++) {
-                var next = dealer.DealCard((ICanParent)last ?? tableau);
+                var next = dealer.DealCard((ICanParent)last ?? tableau, stock.GlobalPosition);
                 if(next != null)
                     last = next;
             }
         }
 
-        dealer.AnimateDeal();
+        dealer.AnimateMove(true);
     }
 
     private void ConfigureUI()
@@ -57,13 +67,12 @@ public partial class GameController : Node
         GetNode<Button>("%Hint").Pressed += () => {
             if (victory.Visible)
                 return;
-            var allCards = dealer.GetChildren().OfType<Card>().ToList();
-            var allSpaces = GetChildren().OfType<Space>().ToList();
+            var allCards = dealer.AllCards();
             foreach(var c in allCards.Where(c => c.CanBeDragged()))
             {
                 if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
                     c.Flash();
-                else if(allSpaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
+                else if(spaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
                     c.Flash();
             }
         };
@@ -82,9 +91,6 @@ public partial class GameController : Node
                 GetNode<Button>("%Stack").Disabled = alwaysStack;
         };
     }
-
-    Card lastWaste;
-    readonly DragState dragState = new ();
 
     public override void _Input(InputEvent @event)
     {
@@ -106,9 +112,9 @@ public partial class GameController : Node
                 }
                 else // return to start
                 {
-                    dealer.QueueReturn(dragState.Card);
+                    dealer.QueueMove(dragState.Card, true);
                     dragState.Reset();
-                    dealer.AnimateReturn();
+                    dealer.AnimateMove(false);
                 }
             } 
             else if (!dragState.Active && mb.Pressed)
@@ -122,7 +128,7 @@ public partial class GameController : Node
                 {
                     for(var i = 0; i < 3; i++)
                     {
-                        var next = dealer.DealCard(lastWaste);
+                        var next = dealer.DealCard(lastWaste, stock.GlobalPosition);
                         if(next != null && lastWaste == null)
                         {
                             next.GlobalPosition = GetNode<Area2D>("%Waste").GlobalPosition;
@@ -130,7 +136,7 @@ public partial class GameController : Node
                         }
                         lastWaste = next;
                     }
-                    dealer.AnimateDeal();
+                    dealer.AnimateMove(true);
                     if(dealer.DeckEmpty)
                         s.Visible = false;
                 }
@@ -174,21 +180,21 @@ public partial class GameController : Node
 
     private void TryStackOnFoundations()
     {
-        var foundations = GetChildren().OfType<Space>().Where(s => s.Location == LocationType.Foundation).ToList();
         var nextRank = foundations.Select(f => f.TopCard()?.Rank + 1 ?? 1).Min();
-
+        var allCards = dealer.AllCards();
         foreach(var f in foundations)
         {
             var top = f.TopCard();
             if(top != null && top.Rank > nextRank)
                 continue;
 
-            var next = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == nextRank && (top == null || c.Suit == top.Suit) && c.Child == null && c.CanBeDragged()).FirstOrDefault();
+            var next = allCards.Where(c => c.Rank == nextRank && (top == null || c.Suit == top.Suit) && c.Child == null && c.CanBeDragged()).FirstOrDefault();
             if(next == null)
                 continue;
             
             if(next == lastWaste)
                 lastWaste = lastWaste.Parent as Card;
+
             next.ChangeParent(top);
             top.PositionChild(next);
 
@@ -199,7 +205,6 @@ public partial class GameController : Node
 
     private void CheckForWin()
     {
-        var foundations = GetChildren().OfType<Space>().Where(s => s.Location == LocationType.Foundation);
         if(foundations.Any(f => f.TopCard()?.Rank != 13))
             return;
         
