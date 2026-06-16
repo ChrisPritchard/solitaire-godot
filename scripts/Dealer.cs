@@ -9,8 +9,6 @@ public partial class Dealer : Node
 
     private PackedScene cardScene = ResourceLoader.Load<PackedScene>("res://scenes/card.tscn");
 
-    private Stock stock;
-
     private int dealingCount;
 
     private readonly Queue<(int Suit, int Rank)> deck = [];
@@ -19,11 +17,6 @@ public partial class Dealer : Node
     const int dealerZIndex = 1000;
 
     private int lastSeed;
-
-    public override void _Ready()
-    {
-        stock = GetParent().GetNode<Stock>("%Stock");
-    }
 
     public void ShuffleNewDeck(bool sameSeed)
     {

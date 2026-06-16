@@ -6,10 +6,10 @@ public partial class GameController : Node
 {
     private Dealer dealer;
     private Container victory;
-    private Stock stock;
     private List<Space> spaces;
     private List<Space> foundations;
 
+    private Space stock;
     private bool alwaysStack;
 
     private Card lastWaste;
@@ -21,9 +21,10 @@ public partial class GameController : Node
     {
         dealer = GetNode<Dealer>("%Dealer");
         victory = GetNode<Container>("%Victory");
-        stock = GetNode<Stock>("%Stock");
         spaces = [.. GetChildren().OfType<Space>()];
         foundations = [.. spaces.Where(s => s.Location == LocationType.Foundation)];
+
+        stock = spaces.Single(s => s.Location == LocationType.Stock);
 
         NewGame(false);
 
@@ -39,7 +40,8 @@ public partial class GameController : Node
         lastWaste = null;
         victory.Visible = false;
         spaces.ForEach(s => s.Child = null);
-        stock.Visible = true;
+        stock.Location = LocationType.Stock;
+        stock.SetFace();
         dealer.ShuffleNewDeck(sameSeed);
 
         // deal tableaus
@@ -72,7 +74,7 @@ public partial class GameController : Node
             {
                 if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
                     c.Flash();
-                else if(spaces.Exists(o => o.CanAccept(c) && (o.Name != "Spare" || !GetNode<Stock>("%Stock").Visible)))
+                else if(spaces.Exists(o => o.CanAccept(c)))
                     c.Flash();
             }
         };
@@ -124,7 +126,7 @@ public partial class GameController : Node
                 {
                     dragState.Init(c, mb.GlobalPosition);
                 }
-                else if (under is Stock s)
+                else if (under is Space s && s.Location == LocationType.Stock)
                 {
                     for(var i = 0; i < 3; i++)
                     {
@@ -138,7 +140,10 @@ public partial class GameController : Node
                     }
                     dealer.AnimateMove(true);
                     if(dealer.DeckEmpty)
-                        s.Visible = false;
+                    {
+                        s.Location = LocationType.Spare;
+                        s.SetFace();
+                    }
                 }
             }
             if(alwaysStack)
@@ -170,8 +175,6 @@ public partial class GameController : Node
                     top = c;
                 else if(parent is Space s && top == null)
                     top = s;
-                else if(parent is Stock o && o.Visible)
-                    top = o;
             }
         }
 

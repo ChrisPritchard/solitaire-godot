@@ -29,6 +29,9 @@ public partial class Card : Sprite2D, ICanParent
 
     public bool CanAccept(Card other)
     {
+        // can't accept a child if it already has one... 
+        // but skip this check if the other IS our child so 
+        // we can do a recursive draggable check
         if(other != Child && Child != null) 
             return false;
 
@@ -45,6 +48,14 @@ public partial class Card : Sprite2D, ICanParent
         return false;
     }
 
+    public bool CanBeDragged() => Location switch
+        {
+            LocationType.Spare => true,
+            LocationType.Waste => Child == null,
+            LocationType.Tableau => Child == null || (CanAccept(Child) && Child.CanBeDragged()),
+            _ => false,
+        };
+        
     public void ChangeParent(ICanParent other)
     {
         if(Parent != null)
@@ -70,20 +81,6 @@ public partial class Card : Sprite2D, ICanParent
     }
 
     public Card TopCard() => Child?.TopCard() ?? this;
-
-    public bool CanBeDragged()
-    {
-        if (Location == LocationType.Foundation)
-            return false;
-
-        if(Location == LocationType.Waste)
-            return Child == null;
-
-        if (Location == LocationType.Tableau)
-            return Child == null || (CanAccept(Child) && Child.CanBeDragged());
-
-        return false;
-    }
 
     public void Flash()
     {

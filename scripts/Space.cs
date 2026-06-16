@@ -5,6 +5,22 @@ public partial class Space : Sprite2D, ICanParent
     [Export]
     public LocationType Location { get; set; }
 
+    public override void _Ready()
+    {
+        SetFace();
+    }
+
+    public void SetFace()
+    {   
+        Texture = ResourceLoader.Load<Texture2D>("res://assets/card-suites.png");
+        RegionEnabled = true;
+
+        if(Location == LocationType.Stock)
+            RegionRect = SpriteRegions.CardBack;
+        else
+            RegionRect = SpriteRegions.CardSpace;
+    }
+
     public bool CanAccept(Card other)
     {
         if (Child != null)
@@ -13,6 +29,8 @@ public partial class Space : Sprite2D, ICanParent
             return other.Rank == 1 && other.Child == null;
         if(Location == LocationType.Tableau)
             return true;
+        if(Location == LocationType.Stock)
+            return false;
         return other.Child == null;
     }
     

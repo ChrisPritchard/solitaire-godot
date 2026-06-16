@@ -6,10 +6,10 @@ public static class SpriteRegions
     private const int CardWidth = 36;
     private const int CardHeight = 54;
 
-    private static Rect2I Rel(int dx, int dy) => new Rect2I(dx, dy, CardWidth, CardHeight);
+    private static Rect2I Rel(int dx, int dy) => new(dx, dy, CardWidth, CardHeight);
 
     public static readonly Dictionary<int, Dictionary<int, Rect2I>> CardIndexes =
-        new Dictionary<int, Dictionary<int, Rect2I>>
+        new()
         {
             [0] = new Dictionary<int, Rect2I> // hearts
             {

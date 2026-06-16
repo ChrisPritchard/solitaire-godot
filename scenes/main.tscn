@@ -3,11 +3,17 @@
 [ext_resource type="Script" uid="uid://2y0uxyuaperl" path="res://scripts/GameController.cs" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://ot7nk5b4hhtd" path="res://scripts/Sfx.cs" id="2_o6xl0"]
 [ext_resource type="PackedScene" uid="uid://c6m0h2qsosjbe" path="res://scenes/space.tscn" id="2_sugp2"]
-[ext_resource type="PackedScene" uid="uid://cjqjbb4obdk0r" path="res://scenes/stock.tscn" id="3_sugp2"]
 [ext_resource type="AudioStream" uid="uid://lt0xop2u3o1y" path="res://assets/audio/card-place-1.ogg" id="3_tipki"]
 [ext_resource type="AudioStream" uid="uid://mbf6j7ueirwk" path="res://assets/audio/card-slide-1.ogg" id="4_85g3d"]
 [ext_resource type="AudioStream" uid="uid://bv4xfprt346qb" path="res://assets/audio/card-slide-2.ogg" id="5_tipki"]
 [ext_resource type="Script" uid="uid://ytvcr6fmt03c" path="res://scripts/Dealer.cs" id="6_85g3d"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tefeu"]
+load_path = "res://.godot/imported/card-suites.png-71df347d80a59915feb8ac2e136237b2.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o6xl0"]
+atlas = SubResource("CompressedTexture2D_tefeu")
+region = Rect2(12, 242, 36, 54)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
 size = Vector2(34.111847, 51.88983)
@@ -51,9 +57,10 @@ unique_name_in_owner = true
 position = Vector2(70, 550)
 Location = 0
 
-[node name="Spare" parent="." unique_id=1135585897 instance=ExtResource("2_sugp2")]
+[node name="Stock" parent="." unique_id=1135585897 instance=ExtResource("2_sugp2")]
 unique_name_in_owner = true
 position = Vector2(200, 100)
+texture = SubResource("AtlasTexture_o6xl0")
 Location = 3
 
 [node name="Tableau1" parent="." unique_id=1205518017 instance=ExtResource("2_sugp2")]
@@ -94,10 +101,6 @@ position = Vector2(800, 250)
 [node name="Tableau7" parent="." unique_id=1880383339 instance=ExtResource("2_sugp2")]
 unique_name_in_owner = true
 position = Vector2(920, 250)
-
-[node name="Stock" parent="." unique_id=1420905260 instance=ExtResource("3_sugp2")]
-unique_name_in_owner = true
-position = Vector2(200, 100)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1465932366]
 

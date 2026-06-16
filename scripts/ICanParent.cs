@@ -1,4 +1,9 @@
 
+public enum LocationType 
+{
+    Foundation, Tableau, Waste, Stock, Spare
+}
+
 public interface ICanParent
 {
     Card Child { get; set; }
