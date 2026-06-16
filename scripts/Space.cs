@@ -24,4 +24,6 @@ public partial class Space : Sprite2D, ICanParent
         if(other.Child != null)
             other.PositionChild(other.Child);
     }
+
+    public Card TopCard() => Child?.TopCard();
 }

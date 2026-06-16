@@ -6,4 +6,6 @@ public interface ICanParent
 
     bool CanAccept(Card child);
     void PositionChild(Card child);
+
+    Card TopCard();
 }
