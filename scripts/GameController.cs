@@ -174,60 +174,33 @@ public partial class GameController : Node
 
     private void TryStackOnFoundations()
     {
-        // find all stackable, like with hint
-        // if any can be placed on foundations, place
-        // when done, recurse
-
-        // or find tops of foundations, then look for draggable instances of the lowest card value
         var foundations = GetChildren().OfType<Space>().Where(s => s.Location == LocationType.Foundation).ToList();
-        var min = 13;
-        foreach(var f in foundations)
-        {
-            if(f.Child == null)
-            {
-                // search for ace
-                var ace = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == 1 && c.Child == null && c.CanBeDragged()).FirstOrDefault();
-                if(ace != null)
-                {
-                    if(ace == lastWaste)
-                        lastWaste = lastWaste.Parent as Card;
-                    ace.ChangeParent(f);
-                    f.PositionChild(ace);
-                    TryStackOnFoundations();
-                }
-                return;
-            }
-
-            var top = f.Child;
-            while(top.Child != null)
-                top = top.Child;
-            if(top.Rank < min)
-                min = top.Rank;
-        }
+        var nextRank = foundations.Select(f => f.TopCard()?.Rank + 1 ?? 1).Min();
 
         foreach(var f in foundations)
         {
-            var top = f.Child;
-            while(top.Child != null)
-                top = top.Child;
-            if(top.Rank == min)
-            {
-                var next = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == min && c.Suit == top.Suit && c.Child == null && c.CanBeDragged()).FirstOrDefault();
-                if(next != null)
-                {
-                    if(next == lastWaste)
-                        lastWaste = lastWaste.Parent as Card;
-                    next.ChangeParent(top);
-                    top.PositionChild(next);
-                    TryStackOnFoundations();
-                }
-            }
+            var top = f.TopCard();
+            if(top != null && top.Rank > nextRank)
+                continue;
+
+            var next = dealer.GetChildren().OfType<Card>().Where(c => c.Rank == nextRank && (top == null || c.Suit == top.Suit) && c.Child == null && c.CanBeDragged()).FirstOrDefault();
+            if(next == null)
+                continue;
+            
+            if(next == lastWaste)
+                lastWaste = lastWaste.Parent as Card;
+            next.ChangeParent(top);
+            top.PositionChild(next);
+
+            TryStackOnFoundations();
+            return;
         }
     }
 
     private void CheckForWin()
     {
-        if(dealer.GetChildren().OfType<Card>().Any(o => o.Location != LocationType.Foundation))
+        var foundations = GetChildren().OfType<Space>().Where(s => s.Location == LocationType.Foundation);
+        if(foundations.Any(f => f.TopCard()?.Rank != 13))
             return;
         
         victory.Show();
