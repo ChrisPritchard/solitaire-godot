@@ -7,6 +7,8 @@ public partial class GameController : Node
     private Dealer dealer;
     private Container victory;
 
+    const string configPath = "user://state.sav";
+
     public override void _Ready()
     {
         dealer = GetNode<Dealer>("%Dealer");
@@ -32,6 +34,10 @@ public partial class GameController : Node
                     c.Flash();
             }
         };
+
+        var config = new ConfigFile();
+        if(config.Load(configPath) == Error.Ok)
+            GetNode<Label>("%WinsValue").Text = config.GetValue("stats", "wins", "0").ToString();
     }
 
     private void NewGame(bool sameSeed)
@@ -156,7 +162,18 @@ public partial class GameController : Node
 
     private void CheckForWin()
     {
-        if(dealer.GetChildren().OfType<Card>().All(o => o.Location == LocationType.Foundation))
-            victory.Show();
+        if(dealer.GetChildren().OfType<Card>().Any(o => o.Location != LocationType.Foundation))
+            return;
+        
+        victory.Show();
+
+        var wins = 0;        
+        var config = new ConfigFile();
+        if(config.Load(configPath) == Error.Ok)
+            if(int.TryParse(config.GetValue("stats", "wins", "0").ToString(), out var saved))
+                wins = saved;
+        wins++;
+        config.SetValue("stats", "wins", wins.ToString());
+        GetNode<Label>("%WinsValue").Text = wins.ToString();
     }
 }
