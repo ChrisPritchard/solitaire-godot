@@ -13,7 +13,7 @@ config_version=5
 config/name="solitaire-godot"
 run/main_scene="uid://155xx7s6y6ta"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
-config/icon="res://icon.svg"
+config/icon="uid://bq17pg7g8kkio"
 
 [display]
 
