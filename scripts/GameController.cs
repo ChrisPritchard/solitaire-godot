@@ -8,13 +8,10 @@ public partial class GameController : Node
     private Container victory;
     private List<Space> spaces;
     private List<Space> foundations;
-
     private Space stock;
-    private bool alwaysStack;
-
     private Card lastWaste;
-    private readonly DragState dragState = new ();
 
+    private readonly DragState dragState = new ();
     const string configPath = "user://state.sav";
 
     public override void _Ready()
@@ -55,7 +52,7 @@ public partial class GameController : Node
             }
         }
 
-        dealer.AnimateMove(true);
+        dealer.AnimateMove(true, CheckForAutoStack);
     }
 
     private void ConfigureUI()
@@ -84,14 +81,6 @@ public partial class GameController : Node
                 return;
             TryStackOnFoundations();
         };
-
-        GetNode<CheckBox>("%AlwaysStack").Pressed += () => {
-            if(dealer.Dealing || victory.Visible)
-                return;
-            alwaysStack = GetNode<CheckBox>("%AlwaysStack").ButtonPressed;
-            if(alwaysStack)
-                GetNode<Button>("%Stack").Disabled = alwaysStack;
-        };
     }
 
     public override void _Input(InputEvent @event)
@@ -109,6 +98,7 @@ public partial class GameController : Node
                     if(dragState.Card == lastWaste)
                         lastWaste = lastWaste.Parent as Card;
                     dragState.Conclude(p);
+                    CheckForAutoStack();
                     if (p is Space s && s.Location == LocationType.Foundation)
                         CheckForWin();
                 }
@@ -138,7 +128,7 @@ public partial class GameController : Node
                         }
                         lastWaste = next;
                     }
-                    dealer.AnimateMove(true);
+                    dealer.AnimateMove(true, CheckForAutoStack);
                     if(dealer.DeckEmpty)
                     {
                         s.Location = LocationType.Spare;
@@ -146,8 +136,6 @@ public partial class GameController : Node
                     }
                 }
             }
-            if(alwaysStack)
-                TryStackOnFoundations();
         }
         else if(dragState.Active && @event is InputEventMouseMotion mm)
             dragState.Update(mm.GlobalPosition);
@@ -179,6 +167,12 @@ public partial class GameController : Node
         }
 
         return top;
+    }
+
+    private void CheckForAutoStack()
+    {
+        if(GetNode<CheckBox>("%AlwaysStack").ButtonPressed)
+            TryStackOnFoundations();
     }
 
     private void TryStackOnFoundations()
