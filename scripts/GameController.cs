@@ -69,9 +69,9 @@ public partial class GameController : Node
             var allCards = dealer.AllCards();
             foreach(var c in allCards.Where(c => c.CanBeDragged()))
             {
-                if(allCards.Exists(o => o.Child != c && o.CanAccept(c)))
+                if(allCards.Exists(o => o.Child != c && o.CanAccept(c) && o.Rank != (c.Parent as Card)?.Rank))
                     c.Flash();
-                else if(spaces.Exists(o => o.CanAccept(c)))
+                else if(spaces.Exists(o => o.CanAccept(c) && c.Parent is not Space))
                     c.Flash();
             }
         };
@@ -79,6 +79,13 @@ public partial class GameController : Node
         GetNode<Button>("%Stack").Pressed += () => {
             if(dealer.Dealing || victory.Visible)
                 return;
+            TryStackOnFoundations();
+        };
+
+        GetNode<Button>("%AlwaysStack").Pressed += () => {
+            if(dealer.Dealing || victory.Visible)
+                return;
+            GetNode<Button>("%Stack").Disabled = GetNode<Button>("%AlwaysStack").ButtonPressed;
             TryStackOnFoundations();
         };
     }
@@ -177,6 +184,9 @@ public partial class GameController : Node
 
     private void TryStackOnFoundations()
     {
+        if(dealer.Dealing || victory.Visible)
+            return;
+
         var nextRank = foundations.Select(f => f.TopCard()?.Rank + 1 ?? 1).Min();
         var allCards = dealer.AllCards();
         foreach(var f in foundations)
@@ -195,7 +205,10 @@ public partial class GameController : Node
             dealer.QueueMove(next, false);
             next.ChangeParent((ICanParent)top ?? f);
             ((ICanParent)top ?? f).PositionChild(next);
-            dealer.AnimateMove(false, TryStackOnFoundations);
+            dealer.AnimateMove(false, () => {
+                CheckForWin();
+                TryStackOnFoundations();
+            });
             return;
         }
     }
@@ -207,13 +220,15 @@ public partial class GameController : Node
         
         victory.Show();
 
-        var wins = 0;        
         var config = new ConfigFile();
-        if(config.Load(configPath) == Error.Ok)
-            if(int.TryParse(config.GetValue("stats", "wins", "0").ToString(), out var saved))
+
+        var wins = 0;        
+        if(config.Load(configPath) == Error.Ok && int.TryParse(config.GetValue("stats", "wins", "0").ToString(), out var saved))
                 wins = saved;
         wins++;
+        
         config.SetValue("stats", "wins", wins.ToString());
+        config.Save(configPath);
         GetNode<Label>("%WinsValue").Text = wins.ToString();
     }
 }

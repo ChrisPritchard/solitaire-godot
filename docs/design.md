@@ -195,3 +195,7 @@ null reference issues, occasional space non-acceptance, rendering issues
 
 sometimes top foundation does not accept cards, and spare does not either.
 render all under point?
+
+- show hint should not suggest cards that can move to the same arrangement (a 5 under a 6 being able to move to a different 6)
+- when always stack is set, it should do an immediate set attempt (and disable the stack button)
+- victory is still borked.

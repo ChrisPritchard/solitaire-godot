@@ -30,7 +30,7 @@ public partial class Dealer : Node
                 allCards.Add((i, j)); 
 
         if(!sameSeed)
-            lastSeed = new Random().Next();
+            lastSeed = 784884902;//new Random().Next();
         GD.Print("using seed ", lastSeed);
         var random = new Random(lastSeed);
 
